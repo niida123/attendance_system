@@ -1,0 +1,8 @@
+.sidebar-dark-indigo {
+    background: linear-gradient(180deg, #4f46e5 0%, #7c3aed 100%) !important;
+}
+.sidebar-dark-indigo .sidebar,
+.sidebar-dark-indigo .os-viewport,
+.sidebar-dark-indigo .os-content {
+    background: transparent !important;
+}
