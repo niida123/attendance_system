@@ -740,8 +740,46 @@
             const BASE_URL = '{{ route('employees.index') }}';
             const DATA_URL = '{{ url('employees/data') }}';
             const CSRF = '{{ csrf_token() }}';
+            const STORAGE_BASE = '{{ asset('storage') }}';
             let isEdit = false;
             let deleteId = null;
+
+            function getEmployeeInitials(firstName, lastName) {
+                return `${(firstName?.[0] ?? '')}${(lastName?.[0] ?? '')}`.toUpperCase() || '?';
+            }
+
+            function buildEmployeePhotoUrl(photoPath) {
+                if (!photoPath) return null;
+                if (photoPath.startsWith('http://') || photoPath.startsWith('https://') || photoPath.startsWith('/')) {
+                    return photoPath;
+                }
+                return `${STORAGE_BASE}/${String(photoPath).replace(/^\/+/, '')}`;
+            }
+
+            function renderEmployeeAvatar(firstName, lastName, photoPath, options = {}) {
+                const initials = getEmployeeInitials(firstName, lastName);
+                const photoUrl = buildEmployeePhotoUrl(photoPath);
+                const size = options.size || 36;
+                const borderRadius = options.borderRadius || '50%';
+                const marginRight = options.marginRight ?? '8px';
+                const inlineStyle = options.style || '';
+                const imgStyle = options.imageStyle || '';
+                const fallbackStyle = options.fallbackStyle || '';
+                const wrapperStyle = `width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:${marginRight};${inlineStyle}`;
+
+                if (photoUrl) {
+                    return `
+                        <span class="employee-avatar" style="${wrapperStyle}">
+                            <img src="${photoUrl}"
+                                alt="${firstName} ${lastName}"
+                                onerror="this.onerror=null;this.style.display='none';var fallback=this.nextElementSibling;if(fallback){fallback.classList.remove('d-none');}"
+                                style="width:100%;height:100%;object-fit:cover;border-radius:${borderRadius};${imgStyle}">
+                            <span class="d-none" style="${wrapperStyle}margin-right:0;border-radius:${borderRadius};background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-weight:700;font-size:${Math.max(size * 0.32, 12)}px;${fallbackStyle}">${initials}</span>
+                        </span>`;
+                }
+
+                return `<span style="${wrapperStyle}margin-right:${marginRight};border-radius:${borderRadius};background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-weight:700;font-size:${Math.max(size * 0.32, 12)}px;${fallbackStyle}">${initials}</span>`;
+            }
 
             /* ── DataTable ──────────────────────────────────────────── */
             const table = $('#employeeTable').DataTable({
@@ -790,10 +828,12 @@
                             }
                             const name     = `${row.first_name} ${row.last_name}`;
                             const code     = `<div style="font-size:.72rem;color:#9ca3af;">${row.employee_code}</div>`;
-                            const initials = (row.first_name.charAt(0) + row.last_name.charAt(0)).toUpperCase();
-                            const avatar   = row.photo
-                                ? `<img src="/storage/${row.photo}" class="rounded-circle mr-2" style="width:36px;height:36px;object-fit:cover;flex-shrink:0;" alt="">`
-                                : `<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;flex-shrink:0;margin-right:8px;">${initials}</div>`;
+                            const avatar   = renderEmployeeAvatar(row.first_name, row.last_name, row.photo, {
+                                size: 36,
+                                borderRadius: '50%',
+                                marginRight: '8px',
+                                imageStyle: 'border:0;'
+                            });
                             return `<div class="d-flex align-items-center">${avatar}<div><div style="font-weight:600;color:#1a1f36;line-height:1.3;">${name}</div>${code}</div></div>`;
                         }
                     },
@@ -921,10 +961,13 @@
                         if (!res.success) return;
                         const d = res.data;
                         const name     = `${d.first_name} ${d.last_name}`;
-                        const initials = (d.first_name.charAt(0) + d.last_name.charAt(0)).toUpperCase();
-                        const avatar   = d.photo
-                            ? `<img src="/storage/${d.photo}" style="width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.4);box-shadow:0 4px 14px rgba(0,0,0,.2);" alt="">`
-                            : `<div style="width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:2rem;border:3px solid rgba(255,255,255,.3);">${initials}</div>`;
+                        const avatar   = renderEmployeeAvatar(d.first_name, d.last_name, d.photo, {
+                            size: 110,
+                            borderRadius: '50%',
+                            marginRight: '0',
+                            style: 'border:3px solid rgba(255,255,255,.4);box-shadow:0 4px 14px rgba(0,0,0,.2);',
+                            imageStyle: 'border:0;'
+                        });
                         const statusBadge = d.status === 'Active'
                             ? '<span class="badge-active"><i class="fas fa-circle mr-1" style="font-size:.5rem;vertical-align:middle;"></i>Active</span>'
                             : '<span class="badge-inactive"><i class="fas fa-circle mr-1" style="font-size:.5rem;vertical-align:middle;"></i>Inactive</span>';
@@ -952,7 +995,7 @@
 
                                 {{-- Left: photo + name --}}
                                 <div style="width:180px;flex-shrink:0;background:linear-gradient(160deg,#4f46e5,#7c3aed);padding:24px 16px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;">
-                                    <div style="margin-bottom:12px;">${avatar}</div>
+                                    <div style="margin-bottom:12px;display:flex;justify-content:center;">${avatar}</div>
                                     <div style="color:#fff;font-weight:700;font-size:.88rem;text-align:center;line-height:1.4;">${name}</div>
                                     <div style="color:rgba(255,255,255,.65);font-size:.72rem;margin-top:4px;">${d.employee_code}</div>
                                     <div style="margin-top:10px;">${statusBadge}</div>
@@ -1064,11 +1107,19 @@
                             // Show current photo preview
                             $('#photoPreview').remove();
                             if (d.photo) {
-                                $('#photo').after(
-                                    `<div id="photoPreview" style="margin-top:6px;display:flex;align-items:center;gap:8px;">
-                                        <img src="/storage/${d.photo}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;border:1.5px solid #e5e7eb;">
+                                const photoUrl = buildEmployeePhotoUrl(d.photo);
+                                const previewMarkup = photoUrl
+                                    ? `<div id="photoPreview" style="margin-top:6px;display:flex;align-items:center;gap:8px;">
+                                        <img src="${photoUrl}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;border:1.5px solid #e5e7eb;" onerror="this.style.display='none';this.nextElementSibling&&this.nextElementSibling.classList.remove('d-none');">
+                                        <span class="d-none" style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:.72rem;">${getEmployeeInitials(d.first_name, d.last_name)}</span>
                                         <span style="font-size:.72rem;color:#9ca3af;">Current photo — upload new to replace</span>
                                     </div>`
+                                    : `<div id="photoPreview" style="margin-top:6px;display:flex;align-items:center;gap:8px;">
+                                        <span style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:.72rem;">${getEmployeeInitials(d.first_name, d.last_name)}</span>
+                                        <span style="font-size:.72rem;color:#9ca3af;">Current photo — upload new to replace</span>
+                                    </div>`;
+                                $('#photo').after(
+                                    previewMarkup
                                 );
                             }
                             $('#position_id').val(d.position_id);
