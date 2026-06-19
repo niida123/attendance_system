@@ -21,9 +21,9 @@ class LeaveRequest extends Model
     ];
 
     protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
-        'approval_date' => 'date',
+        'start_date'    => 'date:Y-m-d',  // ← add format
+        'end_date'      => 'date:Y-m-d',  // ← add format
+        'approval_date' => 'date:Y-m-d',  // ← add format
     ];
 
     public function employee()

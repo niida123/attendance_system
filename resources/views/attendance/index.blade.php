@@ -231,6 +231,31 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
+
+        /* ── Stats Row: 2x2 on all screens below desktop ── */
+        @media (max-width: 992px) {
+            #statsRow .col-md-3 {
+                flex: 0 0 50%;
+                max-width: 50%;
+                margin-bottom: 12px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            #statsRow [id^="stat"] {
+                font-size: 1.15rem !important;
+            }
+
+            #statsRow > .col-md-3 > div {
+                padding: 12px 14px !important;
+                gap: 10px !important;
+            }
+
+            #statsRow > .col-md-3 > div > div:first-child {
+                width: 36px !important;
+                height: 36px !important;
+            }
+        }
         #attendanceTable tbody tr {
             transition: background .15s;
         }

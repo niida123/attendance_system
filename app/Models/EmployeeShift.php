@@ -7,27 +7,33 @@ use Illuminate\Database\Eloquent\Model;
 class EmployeeShift extends Model
 {
     //  
-    protected $primaryKey = 'shift_id';
+    protected $primaryKey = 'employee_shift_id';
+    protected $table = 'employee_shifts';
     protected $fillable = [
-        'shift_name',
-        'start_time',
-        'end_time',
-        'late_after_minutes',
-        'early_leave_before_minutes',
-        'working_hours',
-        'status',
+        'employee_id',
+        'shift_id',
+        'effective_from',
+        'effective_to',
     ];
-    
-     protected $casts = [
-        'working_hours' => 'decimal:2',
-    ];
+
+    // ← Add this
+    public function shift()
+    {
+        return $this->belongsTo(Shift::class, 'shift_id', 'shift_id');
+    }
+
+    // ← Add this
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
+    }
 
     public function employeeShifts()
     {
         return $this->hasMany(
             EmployeeShift::class,
-            'shift_id',
-            'shift_id'
+            'employee_shift_id',
+            'employee_shift_id'
         );
     }
 }

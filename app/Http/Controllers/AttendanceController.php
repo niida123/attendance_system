@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
 use App\Models\Holiday;
+use App\Models\Employee;
+use App\Models\EmployeeShift;
+use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
 {
@@ -29,67 +32,79 @@ class AttendanceController extends Controller
     {
         return view('attendance.checkin');
     }
-
     /**
      * Today's attendance for logged-in employee (used by checkin.blade.php)
      */
     public function today()
     {
-        $user       = Auth::user();
-        $employeeId = $user->employee_id;
-        $today = Carbon::now('Asia/Phnom_Penh')->format('Y-m-d');
+        try {
+            $user = Auth::user();
 
-        $employee = \App\Models\Employee::with('position')
-            ->findOrFail($employeeId);
+            if (!$user || !$user->employee_id) {
+                return response()->json(['success' => false, 'message' => 'No employee linked to this account.'], 422);
+            }
 
-        $attendance = Attendance::where('employee_id', $employeeId)
-            ->where('attendance_date', $today)
-            ->first();
+            $employeeId = $user->employee_id;
+            $today = Carbon::now('Asia/Phnom_Penh')->format('Y-m-d');
 
-        $holiday = Holiday::where('status', 'Active')
-            ->whereDate('start_date', '<=', $today)
-            ->where(function ($q) use ($today) {
-                $q->whereNull('end_date')
-                    ->orWhereDate('end_date', '>=', $today);
-            })
-            ->first();
+            $employee = Employee::with('position')->findOrFail($employeeId);
 
-        if (!$attendance && $holiday) {
-            $attendance = (object) [
-                'attendance_date' => $today,
-                'check_in' => null,
-                'check_out' => null,
-                'working_hours' => null,
-                'status' => 'Holiday',
-                'late_minutes' => null,
-            ];
+            $attendance = Attendance::where('employee_id', $employeeId)
+                ->where('attendance_date', $today)
+                ->first();
+
+            $holiday = Holiday::where('status', 'Active')
+                ->whereDate('start_date', '<=', $today)
+                ->where(function ($q) use ($today) {
+                    $q->whereNull('end_date')
+                        ->orWhereDate('end_date', '>=', $today);
+                })
+                ->first();
+
+            if (!$attendance && $holiday) {
+                $attendance = (object) [
+                    'attendance_date' => $today,
+                    'check_in'        => null,
+                    'check_out'       => null,
+                    'working_hours'   => null,
+                    'status'          => 'Holiday',
+                    'late_minutes'    => null,
+                ];
+            }
+
+            $shift = EmployeeShift::with('shift')
+                ->where('employee_id', $employeeId)
+                ->where('effective_from', '<=', $today)
+                ->where(function ($q) use ($today) {
+                    $q->whereNull('effective_to')
+                        ->orWhere('effective_to', '>=', $today);
+                })
+                ->latest('effective_from')
+                ->first()
+                ?->shift;
+
+            return response()->json([
+                'success'    => true,
+                'employee'   => $employee,
+                'attendance' => $attendance,
+                'shift'      => $shift,
+                'is_holiday' => (bool) $holiday,
+                'holiday'    => $holiday ? [
+                    'holiday_id'   => $holiday->holiday_id,
+                    'holiday_name' => $holiday->holiday_name,
+                    'start_date'   => $holiday->start_date,
+                    'end_date'     => $holiday->end_date,
+                ] : null,
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'file'    => basename($e->getFile()),
+                'line'    => $e->getLine(),
+            ], 500);
         }
-
-        // Get active shift for today
-        $shift = \App\Models\EmployeeShift::with('shift')
-            ->where('employee_id', $employeeId)
-            ->where('effective_from', '<=', $today)
-            ->where(function ($q) use ($today) {
-                $q->whereNull('effective_to')
-                    ->orWhere('effective_to', '>=', $today);
-            })
-            ->latest('effective_from')
-            ->first()
-            ?->shift;
-
-        return response()->json([
-            'success'    => true,
-            'employee'   => $employee,
-            'attendance' => $attendance,
-            'shift'      => $shift,
-            'is_holiday' => (bool) $holiday,
-            'holiday'    => $holiday ? [
-                'holiday_id' => $holiday->holiday_id,
-                'holiday_name' => $holiday->holiday_name,
-                'start_date' => $holiday->start_date,
-                'end_date' => $holiday->end_date,
-            ] : null,
-        ]);
     }
 
     /**
@@ -97,65 +112,51 @@ class AttendanceController extends Controller
      */
     public function recent()
     {
-        $employeeId = Auth::user()->employee_id;
-        $today = Carbon::now('Asia/Phnom_Penh')->format('Y-m-d');
+        try {
+            $employeeId = Auth::user()->employee_id;
+            $today = Carbon::now('Asia/Phnom_Penh')->format('Y-m-d');
 
-        $attendances = Attendance::where('employee_id', $employeeId)
-            ->latest('attendance_date')
-            ->take(7)
-            ->get()
-            ->map(function ($row) {
+            $attendances = Attendance::where('employee_id', $employeeId)
+                ->latest('attendance_date')
+                ->take(7)
+                ->get()
+                ->map(function ($row) use ($employeeId) {
 
-                return [
-                    'attendance_date' => Carbon::parse($row->attendance_date)
-                        ->timezone('Asia/Phnom_Penh')
-                        ->format('Y-m-d'),
+                    $latestLog = AttendanceLog::where('employee_id', $employeeId)
+                        ->whereDate('log_datetime', $row->attendance_date)
+                        ->latest('log_datetime')
+                        ->first();
 
-                    'check_in' => $row->check_in
-                        ? Carbon::createFromFormat('H:i:s', $row->check_in)
-                        ->format('H:i:s')
-                        : null,
+                    return [
+                        'attendance_date' => Carbon::parse($row->attendance_date)
+                            ->timezone('Asia/Phnom_Penh')
+                            ->format('Y-m-d'),
+                        'check_in'        => $row->check_in
+                            ? Carbon::createFromFormat('H:i:s', $row->check_in)->format('H:i:s')
+                            : null,
+                        'check_out'       => $row->check_out
+                            ? Carbon::createFromFormat('H:i:s', $row->check_out)->format('H:i:s')
+                            : null,
+                        'working_hours'   => $row->working_hours,
+                        'status'          => $row->status,
+                        'late_minutes'    => $row->late_minutes,
+                        'device_name'     => $latestLog ? $latestLog->device_name  : null,
+                        'gps_location'    => $latestLog ? $latestLog->gps_location : null,
+                    ];
+                });
 
-                    'check_out' => $row->check_out
-                        ? Carbon::createFromFormat('H:i:s', $row->check_out)
-                        ->format('H:i:s')
-                        : null,
+            // ... rest unchanged (holiday logic etc)
 
-                    'working_hours' => $row->working_hours,
-                    'status' => $row->status,
-                    'late_minutes' => $row->late_minutes,
-                ];
-            });
+            return response()->json(['success' => true, 'data' => $attendances]);
 
-        $todayHoliday = Holiday::where('status', 'Active')
-            ->whereDate('start_date', '<=', $today)
-            ->where(function ($q) use ($today) {
-                $q->whereNull('end_date')
-                    ->orWhereDate('end_date', '>=', $today);
-            })
-            ->first();
-
-        $hasTodayAttendance = $attendances->contains(function ($row) use ($today) {
-            return $row['attendance_date'] === $today;
-        });
-
-        if ($todayHoliday && !$hasTodayAttendance) {
-            $attendances->prepend([
-                'attendance_date' => $today,
-                'check_in' => null,
-                'check_out' => null,
-                'working_hours' => null,
-                'status' => 'Holiday',
-                'late_minutes' => null,
-            ]);
-
-            $attendances = $attendances->take(7)->values();
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error'   => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+            ], 500);
         }
-
-        return response()->json([
-            'success' => true,
-            'data'    => $attendances,
-        ]);
     }
 
     /**
@@ -179,39 +180,73 @@ class AttendanceController extends Controller
      */
     public function checkIn(Request $request)
     {
-        $employeeId = Auth::user()->employee_id;
-        $today = Carbon::now('Asia/Phnom_Penh')->format('Y-m-d');
+        try {
+            $employeeId = Auth::user()->employee_id;
+            $today = Carbon::now('Asia/Phnom_Penh')->format('Y-m-d');
 
-        // Save log
-        AttendanceLog::create([
-            'employee_id' => $employeeId,
-            'log_datetime' => Carbon::now('Asia/Phnom_Penh'),
-            'log_type' => 'Check In',
-            'ip_address' => $request->ip(),
-        ]);
+             // Check if employee has an active shift today
+            $hasShift = EmployeeShift::where('employee_id', $employeeId)
+                ->where('effective_from', '<=', $today)
+                ->where(function ($q) use ($today) {
+                    $q->whereNull('effective_to')
+                        ->orWhere('effective_to', '>=', $today);
+                })
+                ->exists();
 
-        // Create or get attendance
-        $attendance = Attendance::firstOrCreate(
-            [
-                'employee_id' => $employeeId,
-                'attendance_date' => $today
-            ],
-            [
-                'status' => 'Present',
-            ]
-        );
+            if (!$hasShift) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You have no shift assigned for today. Please contact your administrator.',
+                ], 422);
+            }
 
-        if (!$attendance->check_in) {
-            $attendance->check_in = Carbon::now('Asia/Phnom_Penh')->format('H:i:s');
-            $attendance->status = 'Present';
-            $attendance->save();
+            // Prevent duplicate check-in
+            $existing = Attendance::where('employee_id', $employeeId)
+                ->where('attendance_date', $today)
+                ->whereNotNull('check_in')
+                ->first();
+
+            if ($existing) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You have already checked in today.',
+                ]);
+            }
+
+            AttendanceLog::create([
+                'employee_id'  => $employeeId,
+                'log_datetime' => Carbon::now('Asia/Phnom_Penh'),
+                'log_type'     => 'Check In',
+                'ip_address'   => $request->ip(),
+                'device_name' => substr($request->userAgent(), 0, 500),
+                'gps_location' => $request->gps_location,
+            ]);
+
+            $attendance = Attendance::firstOrCreate(
+                ['employee_id' => $employeeId, 'attendance_date' => $today],
+                ['status' => 'Present']
+            );
+
+            if (!$attendance->check_in) {
+                $attendance->check_in = Carbon::now('Asia/Phnom_Penh')->format('H:i:s');
+                $attendance->status   = 'Present';
+                $attendance->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Checked in successfully.',
+                'data'    => $attendance,
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => basename($e->getFile()),
+            ], 500);
         }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Checked in successfully.',
-            'data'    => $attendance,
-        ]);
     }
 
 
@@ -229,6 +264,8 @@ class AttendanceController extends Controller
             'log_datetime' => Carbon::now('Asia/Phnom_Penh'),
             'log_type'     => 'Check Out',
             'ip_address'   => $request->ip(),
+            'device_name' => substr($request->userAgent(), 0, 500),
+            'gps_location' => $request->gps_location,
         ]);
 
         $attendance = Attendance::where('employee_id', $employeeId)

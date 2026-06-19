@@ -1,8 +1,9 @@
-.sidebar-dark-indigo {
-    background: linear-gradient(180deg, #4f46e5 0%, #7c3aed 100%) !important;
+.sidebar-light-purple,
+.main-sidebar {
+    background-color: rgba(255, 255, 255, 0.6) !important; /* adjust 0.6 for opacity level */
 }
-.sidebar-dark-indigo .sidebar,
-.sidebar-dark-indigo .os-viewport,
-.sidebar-dark-indigo .os-content {
-    background: transparent !important;
+
+.sidebar-light-purple .nav-sidebar > .nav-item > .nav-link.active,
+.sidebar-light-purple .nav-sidebar > .nav-item > .nav-link:hover {
+    background-color: rgba(108, 84, 245, 0.15) !important; /* light purple hover/active tint */
 }

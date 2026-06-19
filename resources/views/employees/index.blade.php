@@ -1,6 +1,7 @@
 {{-- resources/views/employees/index.blade.php --}}
 @extends('adminlte::page')
 
+
 @section('title', 'Employees')
 
 @section('content_header')
@@ -66,65 +67,53 @@
 
                 <div class="card-body" style="padding:24px;background:#fafbff;">
 
-                    {{-- Stats Row --}}
-                    <div class="row mb-4" id="statsRow">
-                        <div class="col-md-3 mb-3 mb-md-0">
-                            <div
-                                style="background:#fff;border-radius:12px;padding:16px 20px;border:1px solid #f0f0f5;display:flex;align-items:center;gap:14px;">
-                                <div
-                                    style="width:42px;height:42px;border-radius:10px;background:#eef2ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                    <i class="fas fa-briefcase" style="color:#4f46e5;"></i>
-                                </div>
-                                <div>
-                                    <div class="font-weight-bold" id="statTotal"
-                                        style="font-size:1.4rem;color:#1a1f36;line-height:1;">—</div>
-                                    <div style="font-size:.75rem;color:#9ca3af;margin-top:2px;">Total Employees</div>
-                                </div>
+                {{-- Stats Row --}}
+                <div class="row mb-4 g-3" id="statsRow">
+                    <div class="col-6 col-md-3">
+                        <div style="background:#fff;border-radius:12px;padding:16px 20px;border:1px solid #f0f0f5;display:flex;align-items:center;gap:14px;height:100%;">
+                            <div style="width:42px;height:42px;border-radius:10px;background:#eef2ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="fas fa-briefcase" style="color:#4f46e5;"></i>
                             </div>
-                        </div>
-                        <div class="col-md-3 mb-3 mb-md-0">
-                            <div
-                                style="background:#fff;border-radius:12px;padding:16px 20px;border:1px solid #f0f0f5;display:flex;align-items:center;gap:14px;">
-                                <div
-                                    style="width:42px;height:42px;border-radius:10px;background:#ecfdf5;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                    <i class="fas fa-check-circle" style="color:#10b981;"></i>
-                                </div>
-                                <div>
-                                    <div class="font-weight-bold" id="statActive"
-                                        style="font-size:1.4rem;color:#1a1f36;line-height:1;">—</div>
-                                    <div style="font-size:.75rem;color:#9ca3af;margin-top:2px;">Active</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div
-                                style="background:#fff;border-radius:12px;padding:16px 20px;border:1px solid #f0f0f5;display:flex;align-items:center;gap:14px;">
-                                <div
-                                    style="width:42px;height:42px;border-radius:10px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                    <i class="fas fa-pause-circle" style="color:#6b7280;"></i>
-                                </div>
-                                <div>
-                                    <div class="font-weight-bold" id="statInactive"
-                                        style="font-size:1.4rem;color:#1a1f36;line-height:1;">—</div>
-                                    <div style="font-size:.75rem;color:#9ca3af;margin-top:2px;">Inactive</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div
-                                style="background:#fff;border-radius:12px;padding:16px 20px;border:1px solid #f0f0f5;display:flex;align-items:center;gap:14px;">
-                                <div
-                                    style="width:42px;height:42px;border-radius:10px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                    <i class="fas fa-female" style="color:#ec4899;"></i>
-                                </div>
-                                <div>
-                                    <div class="font-weight-bold" id="statFemale"
-                                        style="font-size:1.4rem;color:#1a1f36;line-height:1;">—</div>
-                                    <div style="font-size:.75rem;color:#9ca3af;margin-top:2px;">Female</div>
-                                </div>
+                            <div style="min-width:0;">
+                                <div class="font-weight-bold" id="statTotal" style="font-size:1.4rem;color:#1a1f36;line-height:1;">—</div>
+                                <div style="font-size:.75rem;color:#9ca3af;margin-top:2px;">Total Employees</div>
                             </div>
                         </div>
                     </div>
+                    <div class="col-6 col-md-3">
+                        <div style="background:#fff;border-radius:12px;padding:16px 20px;border:1px solid #f0f0f5;display:flex;align-items:center;gap:14px;height:100%;">
+                            <div style="width:42px;height:42px;border-radius:10px;background:#ecfdf5;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="fas fa-check-circle" style="color:#10b981;"></i>
+                            </div>
+                            <div style="min-width:0;">
+                                <div class="font-weight-bold" id="statActive" style="font-size:1.4rem;color:#1a1f36;line-height:1;">—</div>
+                                <div style="font-size:.75rem;color:#9ca3af;margin-top:2px;">Active</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div style="background:#fff;border-radius:12px;padding:16px 20px;border:1px solid #f0f0f5;display:flex;align-items:center;gap:14px;height:100%;">
+                            <div style="width:42px;height:42px;border-radius:10px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="fas fa-pause-circle" style="color:#6b7280;"></i>
+                            </div>
+                            <div style="min-width:0;">
+                                <div class="font-weight-bold" id="statInactive" style="font-size:1.4rem;color:#1a1f36;line-height:1;">—</div>
+                                <div style="font-size:.75rem;color:#9ca3af;margin-top:2px;">Inactive</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div style="background:#fff;border-radius:12px;padding:16px 20px;border:1px solid #f0f0f5;display:flex;align-items:center;gap:14px;height:100%;">
+                            <div style="width:42px;height:42px;border-radius:10px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="fas fa-female" style="color:#ec4899;"></i>
+                            </div>
+                            <div style="min-width:0;">
+                                <div class="font-weight-bold" id="statFemale" style="font-size:1.4rem;color:#1a1f36;line-height:1;">—</div>
+                                <div style="font-size:.75rem;color:#9ca3af;margin-top:2px;">Female</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                     <div class="d-flex align-items-center ml-auto mt-3" style="gap:10px; flex-wrap:wrap;">
 
@@ -189,6 +178,24 @@
                                     transition:.2s;
                                 ">
                             <i class="fas fa-undo mr-1"></i> Reset
+                        </button>
+
+                        <!-- Print Button -->
+                        <button id="btnPrint"
+                                class="btn btn-sm"
+                                title="Print"
+                                style="
+                                    height:36px;
+                                    border-radius:10px;
+                                    border:1.5px solid #e5e7eb;
+                                    background:#fff;
+                                    color:#6b7280;
+                                    font-weight:600;
+                                    font-size:.8rem;
+                                    padding:0 14px;
+                                    transition:.2s;
+                                ">
+                            <i class="fas fa-print mr-1"></i> Print
                         </button>
 
                     </div>
@@ -473,6 +480,36 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
 
+    #btnPrint:hover {
+        background: #f3f4f6 !important;
+        color: #111827 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(0,0,0,.08);
+    }
+    /* ── Stats Row: 2x2 on all screens below desktop ── */
+    @media (max-width: 992px) {
+        #statsRow .col-md-3 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            margin-bottom: 12px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        #statsRow [id^="stat"] {
+            font-size: 1.15rem !important;
+        }
+
+        #statsRow > .col-md-3 > div {
+            padding: 12px 14px !important;
+            gap: 10px !important;
+        }
+
+        #statsRow > .col-md-3 > div > div:first-child {
+            width: 36px !important;
+            height: 36px !important;
+        }
+    }
         /* Reset Filters Button */
         #resetFilters:hover {
             background: #f3f4f6 !important;
@@ -491,6 +528,8 @@
             border-color: #4f46e5 !important;
             box-shadow: 0 0 0 3px rgba(79,70,229,.12) !important;
         }
+
+        
         /* ── Table rows ── */
         #employeeTable tbody tr {
             transition: background .15s;
@@ -921,6 +960,123 @@
                 $('#searchEmployee').val('');
                 $('#clearSearch').hide();
                 table.search('').columns().search('').draw();
+            });
+
+            /* ── PRINT ──────────────────────────────────────────────── */
+            $('#btnPrint').on('click', function() {
+                const rows  = table.rows({ search: 'applied' }).data().toArray();
+                const today = new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+
+                let html = `
+                    <html>
+                    <head>
+                        <title>Employee List</title>
+                        <style>
+                            * { margin:0;padding:0;box-sizing:border-box; }
+                            body { font-family: sans-serif; font-size: 13px; color: #1a1f36; padding: 24px; }
+                            .header { margin-bottom: 20px; }
+                            .header h2 { color: #4f46e5; font-size: 18px; margin-bottom: 4px; }
+                            .header p  { color: #9ca3af; font-size: 11px; }
+                            .stats { display:flex; gap:16px; margin-bottom:20px; }
+                            .stat-box { border:1px solid #f0f0f5; border-radius:10px; padding:10px 16px; flex:1; }
+                            .stat-box .num { font-size:1.3rem; font-weight:700; color:#1a1f36; }
+                            .stat-box .lbl { font-size:10px; color:#9ca3af; margin-top:2px; }
+                            table { width:100%; border-collapse:collapse; }
+                            thead tr { background:#f8f9ff; }
+                            th { padding:10px 14px; text-align:left; font-size:10px; text-transform:uppercase;
+                                letter-spacing:.5px; color:#6b7280; border-bottom:2px solid #eef0f8; }
+                            td { padding:10px 14px; border-bottom:1px solid #f3f4f6; vertical-align:middle; }
+                            tr:hover td { background:#f5f6ff; }
+                            .name   { font-weight:600; color:#1a1f36; }
+                            .code   { font-size:10px; color:#9ca3af; }
+                            .dept   { color:#374151; font-weight:500; }
+                            .pos    { color:#6b7280; }
+                            .badge-active   { background:#ecfdf5;color:#059669;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600; }
+                            .badge-inactive { background:#f3f4f6;color:#6b7280;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600; }
+                            .avatar { width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#7c3aed);
+                                    color:#fff;font-weight:700;font-size:11px;display:inline-flex;
+                                    align-items:center;justify-content:center;margin-right:8px;vertical-align:middle;flex-shrink:0; }
+                            @media print {
+                                body { padding: 0; }
+                                button { display:none; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h2><span style="color:#4f46e5;">&#128188;</span> Employee List</h2>
+                            <p>Printed on ${today} &nbsp;·&nbsp; ${rows.length} record(s) shown</p>
+                        </div>
+
+                        <div class="stats">
+                            <div class="stat-box">
+                                <div class="num">${rows.length}</div>
+                                <div class="lbl">Total</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="num" style="color:#059669;">${rows.filter(r => r.status === 'Active').length}</div>
+                                <div class="lbl">Active</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="num" style="color:#6b7280;">${rows.filter(r => r.status !== 'Active').length}</div>
+                                <div class="lbl">Inactive</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="num" style="color:#ec4899;">${rows.filter(r => r.gender === 'Female').length}</div>
+                                <div class="lbl">Female</div>
+                            </div>
+                        </div>
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Employee</th>
+                                    <th>Department</th>
+                                    <th>Position</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+
+                rows.forEach((r, i) => {
+                    const name     = `${r.first_name} ${r.last_name}`;
+                    const initials = `${r.first_name?.[0] ?? ''}${r.last_name?.[0] ?? ''}`.toUpperCase();
+                    const dept     = r.department?.department_name || '—';
+                    const pos      = r.position?.position_name    || '—';
+                    const badge    = r.status === 'Active'
+                        ? '<span class="badge-active">Active</span>'
+                        : '<span class="badge-inactive">Inactive</span>';
+
+                    html += `
+                        <tr>
+                            <td style="color:#9ca3af;font-size:.78rem;">${i + 1}</td>
+                            <td>
+                                <div style="display:flex;align-items:center;">
+                                    <span class="avatar">${initials}</span>
+                                    <div>
+                                        <div class="name">${name}</div>
+                                        <div class="code">${r.employee_code}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="dept">${dept}</td>
+                            <td class="pos">${pos}</td>
+                            <td>${badge}</td>
+                        </tr>`;
+                });
+
+                html += `
+                            </tbody>
+                        </table>
+                    </body>
+                    </html>`;
+
+                const w = window.open('', '_blank');
+                w.document.write(html);
+                w.document.close();
+                w.focus();
+                setTimeout(() => w.print(), 500);
             });
 
             // Custom Search

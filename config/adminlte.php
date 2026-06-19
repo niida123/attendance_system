@@ -135,8 +135,8 @@ return [
 
     'usermenu_enabled' => true,
     'usermenu_header' => true,
-    'usermenu_header_class' => 'bg-primary',
-    'usermenu_image' => false,
+    'usermenu_header_class' => 'bg-purple',
+    'usermenu_image' => true,
     'usermenu_desc' => false,
     'usermenu_profile_url' => false,
 
@@ -191,12 +191,12 @@ return [
     */
 
     'classes_body' => '',
-    'classes_brand' => 'white',
+    'classes_brand' => 'light-purple',
     'classes_brand_text' => '',
     'classes_content_wrapper' => '',
     'classes_content_header' => '',
     'classes_content' => '',
-    'classes_sidebar' => 'sidebar-dark-indigo elevation-4',
+    'classes_sidebar' => 'sidebar-light-purple elevation-4',
     'classes_sidebar_nav' => '',
     'classes_topnav' => 'navbar-white navbar-light',
     'classes_topnav_nav' => 'navbar-expand',
@@ -374,6 +374,11 @@ return [
             'url'  => 'shifts',
             'icon' => 'fas fa-business-time',
         ],
+        [
+            'text' => 'Employee Shifts',
+            'url'  => 'employee_shifts',
+            'icon' => 'fas fa-user-clock',
+        ],
 
         // =====================
         // LEAVE SYSTEM
@@ -381,11 +386,16 @@ return [
         [
             'header' => 'LEAVE MANAGEMENT'
         ],
-
         [
             'text' => 'Leave Requests',
-            'url'  => 'leave',
+            'url'  => 'leave-requests',
             'icon' => 'fas fa-calendar-alt',
+            // 'can'     => 'admin',
+        ],
+        [
+            'text'    => 'My Leave',
+            'url'     => 'leave-requests/my-leave',
+            'icon'    => 'fas fa-calendar-check',
         ],
         [
             'text' => 'Leave Types',
@@ -452,6 +462,12 @@ return [
     */
 
     'plugins' => [
+        'AjaxNav' => [
+        'active' => true,
+        'files' => [
+                ['type' => 'js', 'asset' => true, 'location' => 'js/ajax-nav.js'],
+            ],
+        ],
         'Datatables' => [
             'active' => false,
             'files' => [

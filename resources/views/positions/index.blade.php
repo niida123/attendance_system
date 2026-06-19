@@ -631,7 +631,8 @@
                         next: '<i class="fas fa-chevron-right"></i>'
                     }
                 },
-                columns: [{
+                columns: [
+                    {
                         data: null,
                         render: (d, t, r, m) =>
                             `<span class="row-num">${m.row + m.settings._iDisplayStart + 1}</span>`,
@@ -639,41 +640,64 @@
                     },
                     {
                         data: 'position_name',
-                        render: name =>
-                            `<span style="font-weight:600;color:#1a1f36;">${name}</span>`
+                        render: name => `
+                            <div class="d-flex align-items-center" style="gap:10px;">
+                                <span style="font-weight:600;color:#1a1f36;font-size:.875rem;">${name}</span>
+                            </div>`
                     },
                     {
                         data: 'department.department_name',
-                        render: dept =>
-                            dept ?
-                            `<span style="color:#6b7280;font-weight:500;">${dept}</span>` :
-                            '<span style="color:#d1d5db;">—</span>'
+                        render: dept => {
+                            if (!dept) return '<span style="color:#d1d5db;">—</span>';
+
+                            const colors = [
+                                { bg: '#e0e7ff', color: '#4f46e5' },
+                                { bg: '#d1fae5', color: '#059669' },
+                                { bg: '#fce7f3', color: '#db2777' },
+                                { bg: '#fef3c7', color: '#d97706' },
+                                { bg: '#ede9fe', color: '#7c3aed' },
+                                { bg: '#fee2e2', color: '#ef4444' },
+                                { bg: '#e0f2fe', color: '#0284c7' },
+                            ];
+                            const { bg, color } = colors[dept.charCodeAt(0) % colors.length];
+
+                            return `<span style="
+                                background:${bg};color:${color};
+                                padding:5px 12px;border-radius:20px;
+                                font-size:.78rem;font-weight:600;
+                                display:inline-block;letter-spacing:.2px;">
+                                ${dept}
+                            </span>`;
+                        }
                     },
                     {
                         data: 'description',
-                        render: data =>
-                            data ?
-                            `<span style="color:#6b7280;">${data}</span>` :
-                            '<span style="color:#d1d5db;">—</span>'
+                        render: data => data
+                            ? `<span style="color:#374151; font-size:.875rem;">${data}</span>`
+                            : '<span style="color:#d1d5db; font-size:.875rem;">—</span>'
                     },
                     {
                         data: 'status',
                         className: 'text-center',
-                        render: function (data, type, row) {
+                        render: function(data, type) {
                             if (type === 'display') {
                                 return data === 'Active'
-                                    ? '<span class="badge-active"><i class="fas fa-circle mr-1"></i>Active</span>'
-                                    : '<span class="badge-inactive"><i class="fas fa-circle mr-1"></i>Inactive</span>';
+                                    ? `<span class="badge-active"><i class="fas fa-circle" style="font-size:.45rem;"></i> Active</span>`
+                                    : `<span class="badge-inactive"><i class="fas fa-circle" style="font-size:.45rem;"></i> Inactive</span>`;
                             }
-
-                            // IMPORTANT: return raw value for filtering/search
-                            return data;
+                            return data; // raw value for search/filter
                         }
                     },
                     {
                         data: 'created_at',
-                        render: d =>
-                            `<span style="color:#9ca3af;font-size:.82rem;">${new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>`
+                        render: d => `
+                            <span style="color:#6b7280;font-size:.78rem;">
+                                ${new Date(d).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric'
+                                })}
+                            </span>`
                     },
                     {
                         data: 'position_id',
@@ -681,18 +705,17 @@
                         searchable: false,
                         className: 'text-center',
                         render: (id, t, row) => `
-                        <div class="d-flex align-items-center justify-content-center" style="gap:6px;">
-                            <button type="button" class="btn-edit-row btn-edit"
-                                    data-id="${id}" data-toggle="tooltip" title="Edit">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                            <button type="button" class="btn-delete-row btn-delete"
-                                    data-id="${id}" data-name="${row.position_name}"
-                                    data-toggle="tooltip" title="Delete">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    `
+                            <div class="d-flex align-items-center justify-content-center" style="gap:6px;">
+                                <button type="button" class="btn-edit-row btn-edit"
+                                        data-id="${id}" data-toggle="tooltip" title="Edit">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+                                <button type="button" class="btn-delete-row btn-delete"
+                                        data-id="${id}" data-name="${row.position_name}"
+                                        data-toggle="tooltip" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>`
                     }
                 ]
             });

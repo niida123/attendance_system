@@ -353,22 +353,29 @@
                             $('#btnCheckOut').prop('disabled', true);
                         }
                     } else {
-                        // Not checked in yet
                         setRing(0, '#4f46e5');
                         $('#ringIcon').attr('class','fas fa-fingerprint').css('color','#4f46e5');
                         $('#ringLabel').text('Ready');
-                        $('#actionHint').text('You have not checked in yet. Click Check In to start your day.');
-                        $('#btnCheckIn').prop('disabled', false);
-                        $('#btnCheckOut').prop('disabled', true);
-                        $('#summaryCheckIn').text('—');
-                        $('#summaryCheckOut').text('—');
-                        $('#summaryWorking').text('—');
-                        $('#summaryStatus').html(statusBadge('Absent'));
+
+                        if (!res.shift) {
+                            // ← Disable button, show warning
+                            $('#btnCheckIn').prop('disabled', true);
+                            $('#btnCheckOut').prop('disabled', true);
+                            $('#actionHint').html(
+                                '<span style="color:#ef4444;"><i class="fas fa-ban mr-1"></i>No shift assigned. Contact your administrator.</span>'
+                            );
+                        } else {
+                            $('#btnCheckIn').prop('disabled', false);
+                            $('#btnCheckOut').prop('disabled', true);
+                            $('#actionHint').text('You have not checked in yet. Click Check In to start your day.');
+                        }
                     }
                 })
-                .fail(function () {
-                    toastr.error('Failed to load today\'s attendance.');
-                });
+                .fail(function (xhr) {
+                const msg = xhr.responseJSON?.message ?? 'Failed to load today\'s attendance.';
+                toastr.error(msg);
+                console.error('today() error:', xhr.responseJSON);
+            });
         }
 
         /* ── Load recent logs ───────────────────────────────── */
@@ -405,6 +412,8 @@
                                             <i class="fas fa-exclamation-circle mr-1"></i>
                                             ${r.late_minutes ? r.late_minutes + ' min late' : '0 min'}
                                         </span>
+                                        <span><i class="fas fa-desktop mr-1" style="color:#6366f1;"></i>${r.device_name ?? '—'}</span>
+                                        <span><i class="fas fa-map-marker-alt mr-1" style="color:#10b981;"></i>${r.gps_location ?? '—'}</span>
                                     </div>
                                 </div>
                             </div>`;
@@ -436,51 +445,91 @@
             $('#empInitials').show();
         });
 
+            /* ── GPS helper ─────────────────────────────────────── */
+            let currentGPS = null;
+            let gpsReady = false;
+
+            function getGPS() { return currentGPS; }
+
+            // Request GPS immediately on page load
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(
+                    pos => {
+                        currentGPS = pos.coords.latitude + ',' + pos.coords.longitude;
+                        gpsReady = true;
+                    },
+                    () => {
+                        currentGPS = null;
+                        gpsReady = true;
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
+            } else {
+                gpsReady = true;
+            }
+
         /* ── Check In ───────────────────────────────────────── */
         $('#btnCheckIn').on('click', function () {
             const $btn = $(this);
-            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-2"></i> Checking In...');
+            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-2"></i> Getting location...');
 
-            $.ajax({ url: CHECKIN_URL, method: 'POST', data: { _token: CSRF } })
-                .done(function (res) {
-                    if (res.success) {
-                        toastr.success(res.message);
-                        // ← Reset label BEFORE loadToday disables it
-                        $btn.html('<i class="fas fa-sign-in-alt mr-2"></i> Check In');
-                        loadToday();
-                        loadRecent();
-                    } else {
-                        toastr.warning(res.message);
-                        $btn.prop('disabled', false).html('<i class="fas fa-sign-in-alt mr-2"></i> Check In');
-                    }
-                })
-                .fail(function (xhr) {
-                    toastr.error(xhr.responseJSON?.message ?? 'Check-in failed.');
-                    $btn.prop('disabled', false).html('<i class="fas fa-sign-in-alt mr-2"></i> Check In');
-                });
+            // Wait up to 5s for GPS, then proceed anyway
+            let waited = 0;
+            const interval = setInterval(function () {
+                waited += 200;
+                if (gpsReady || waited >= 5000) {
+                    clearInterval(interval);
+                    $btn.html('<i class="fas fa-spinner fa-spin mr-2"></i> Checking In...');
+
+                    $.ajax({ url: CHECKIN_URL, method: 'POST', data: { _token: CSRF, gps_location: getGPS() } })
+                        .done(function (res) {
+                            if (res.success) {
+                                toastr.success(res.message);
+                                $btn.html('<i class="fas fa-sign-in-alt mr-2"></i> Check In');
+                                loadToday();
+                                loadRecent();
+                            } else {
+                                toastr.warning(res.message);
+                                $btn.prop('disabled', false).html('<i class="fas fa-sign-in-alt mr-2"></i> Check In');
+                            }
+                        })
+                        .fail(function (xhr) {
+                            toastr.error(xhr.responseJSON?.message ?? 'Check-in failed.');
+                            $btn.prop('disabled', false).html('<i class="fas fa-sign-in-alt mr-2"></i> Check In');
+                        });
+                }
+            }, 200);
         });
         /* ── Check Out ──────────────────────────────────────── */
         $('#btnCheckOut').on('click', function () {
             const $btn = $(this);
-            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-2"></i> Checking Out...');
+            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-2"></i> Getting location...');
 
-            $.ajax({ url: CHECKOUT_URL, method: 'POST', data: { _token: CSRF } })
-                .done(function (res) {
-                    if (res.success) {
-                        toastr.success(res.message);
-                        // ← Reset label BEFORE loadToday disables it
-                        $btn.html('<i class="fas fa-sign-out-alt mr-2"></i> Check Out');
-                        loadToday();
-                        loadRecent();
-                    } else {
-                        toastr.warning(res.message);
-                        $btn.prop('disabled', false).html('<i class="fas fa-sign-out-alt mr-2"></i> Check Out');
-                    }
-                })
-                .fail(function (xhr) {
-                    toastr.error(xhr.responseJSON?.message ?? 'Check-out failed. Please try again.');
-                    $btn.prop('disabled', false).html('<i class="fas fa-sign-out-alt mr-2"></i> Check Out');
-                });
+            let waited = 0;
+            const interval = setInterval(function () {
+                waited += 200;
+                if (gpsReady || waited >= 5000) {
+                    clearInterval(interval);
+                    $btn.html('<i class="fas fa-spinner fa-spin mr-2"></i> Checking Out...');
+
+                    $.ajax({ url: CHECKOUT_URL, method: 'POST', data: { _token: CSRF, gps_location: getGPS() } })
+                        .done(function (res) {
+                            if (res.success) {
+                                toastr.success(res.message);
+                                $btn.html('<i class="fas fa-sign-out-alt mr-2"></i> Check Out');
+                                loadToday();
+                                loadRecent();
+                            } else {
+                                toastr.warning(res.message);
+                                $btn.prop('disabled', false).html('<i class="fas fa-sign-out-alt mr-2"></i> Check Out');
+                            }
+                        })
+                        .fail(function (xhr) {
+                            toastr.error(xhr.responseJSON?.message ?? 'Check-out failed. Please try again.');
+                            $btn.prop('disabled', false).html('<i class="fas fa-sign-out-alt mr-2"></i> Check Out');
+                        });
+                }
+            }, 200);
         });
 
         /* ── Init ───────────────────────────────────────────── */
