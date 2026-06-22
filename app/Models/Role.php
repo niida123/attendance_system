@@ -2,24 +2,29 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Permission\Models\Role as SpatieRole;
 
-class Role extends Model
+class Role extends SpatieRole
 {
-     protected $primaryKey = 'role_id';
+    use HasFactory;
 
     protected $fillable = [
-        'role_name',
+        'name',
+        'guard_name',
         'description',
         'status',
     ];
 
-    public function users()
+    // Renamed from users() to assignedUsers() to avoid conflict with Spatie
+    public function assignedUsers()
     {
-        return $this->hasMany(
-            User::class,
+        return $this->morphedByMany(
+            \App\Models\User::class,
+            'model',
+            'model_has_roles',
             'role_id',
-            'role_id'
+            'model_id'
         );
     }
 }

@@ -10,24 +10,25 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Employee;
+use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['username', 'email', 'password', 'last_login'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-     use Notifiable;
+    use Notifiable, HasRoles, HasFactory;
 
     protected $table = 'users';
-    protected $primaryKey = 'id';
 
     protected $fillable = [
         'employee_id',
-        'role_id',
         'username',
         'email',
         'status',
+        'avatar',
         'password',
         'last_login',
+        'activity_log',
     ];
 
     protected $hidden = [
@@ -41,30 +42,30 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'last_login' => 'datetime',
+            'activity_log' => 'array',
         ];
     }
 
-    /*
-    |-------------------------
-    | Relationships
-    |-------------------------
-    */
+    protected $guard_name = 'web';
 
-    // User belongs to Role
-    public function role()
-    {
-        return $this->belongsTo(Role::class, 'role_id', 'role_id');
-    }
+    protected $appends = ['role', 'name'];
 
-    // User belongs to Employee (optional)
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
     }
-    // Option A: Add a 'name' accessor that returns username
+
+    // Fakes a singular "role" so your existing UI (role.name, role.id) keeps working,
+    // backed by Spatie's actual roles() relationship under the hood
+    public function getRoleAttribute()
+    {
+        $role = $this->roles->first();
+        return $role ? ['id' => $role->id, 'name' => $role->name] : null;
+    }
+
     public function getNameAttribute()
     {
-         if ($this->employee) {
+        if ($this->employee) {
             return $this->employee->first_name . ' ' . $this->employee->last_name;
         }
         return $this->username;
@@ -72,10 +73,18 @@ class User extends Authenticatable
 
     public function adminlte_image()
     {
+        // 1. User's own uploaded avatar
+        if ($this->avatar) {
+            return asset('storage/' . $this->avatar);
+        }
+
+        // 2. Linked employee photo
         if ($this->employee && $this->employee->photo) {
             return asset('storage/' . $this->employee->photo);
         }
-        return asset('https://ui-avatars.com/api/?name=' . urlencode($this->name));
+
+        // 3. Fallback to generated initials avatar
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=4f46e5&color=fff';
     }
 
     public function adminlte_desc()

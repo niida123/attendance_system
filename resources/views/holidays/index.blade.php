@@ -46,15 +46,11 @@
 
                         <!-- Search Box -->
                         <div style="position: relative; width:250px; min-width:180px;">
-                            <input type="text"
-                                class="form-control form-control-sm"
-                                placeholder="Search holiday..."
-                                id="searchHoliday"
-                                style="padding-right:35px;">
+                            <input type="text" class="form-control form-control-sm" placeholder="Search holiday..."
+                                id="searchHoliday" style="padding-right:35px;">
 
-                            <i class="fas fa-times"
-                            id="clearSearch"
-                            style="display:none;
+                            <i class="fas fa-times" id="clearSearch"
+                                style="display:none;
                                     position:absolute;
                                     right:10px;
                                     top:50%;
@@ -65,14 +61,13 @@
                         </div>
 
                         <!-- Add Button -->
-                        <button type="button"
-                                class="btn btn-sm"
-                                data-toggle="modal"
-                                data-target="#holidaysModal"
+                        @can('holiday.create')
+                            <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#holidaysModal"
                                 id="btnCreate"
                                 style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-weight:600;font-size:.82rem;letter-spacing:.2px;box-shadow:0 4px 14px rgba(79,70,229,.35);">
-                            <i class="fas fa-plus mr-1"></i> Add Holiday
-                        </button>
+                                <i class="fas fa-plus mr-1"></i> Add Holiday
+                            </button>
+                        @endcan
 
                     </div>
 
@@ -115,37 +110,37 @@
                     {{-- Table --}}
                     <div style="background:#fff;border-radius:12px;border:1px solid #f0f0f5;overflow:hidden;">
                         <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-                        <table id="holidaysTable" class="table table-hover w-100 mb-0" style="min-width:800px;">
-                            <thead>
-                                <tr style="background:#f8f9ff;">
-                                    <th width="50"
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        #</th>
-                                    <th width="200"
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        Holiday Name</th>
-                                    <th width="120"
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        Start Date</th>
-                                    <th width="120"
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        End Date</th>
-                                    <th
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        Description</th>
-                                    <th width="100" class="text-center"
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        IS PAID</th>
-                                    <th width="100" class="text-center"
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        Status</th>
-                                    <th width="100" class="text-center"
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                            <table id="holidaysTable" class="table table-hover w-100 mb-0" style="min-width:800px;">
+                                <thead>
+                                    <tr style="background:#f8f9ff;">
+                                        <th width="50"
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            #</th>
+                                        <th width="200"
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Holiday Name</th>
+                                        <th width="120"
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Start Date</th>
+                                        <th width="120"
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            End Date</th>
+                                        <th
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Description</th>
+                                        <th width="100" class="text-center"
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            IS PAID</th>
+                                        <th width="100" class="text-center"
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Status</th>
+                                        <th width="100" class="text-center"
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -187,8 +182,7 @@
                             style="font-weight:600;font-size:.83rem;color:#374151;letter-spacing:.2px;margin-bottom:6px;">
                             HOLIDAY NAME <span class="text-danger">*</span>
                         </label>
-                        <input type="text" id="holiday_name" class="form-control"
-                            placeholder="e.g. New Year's Day"
+                        <input type="text" id="holiday_name" class="form-control" placeholder="e.g. New Year's Day"
                             style="border-radius:10px;border:1.5px solid #e5e7eb;padding:10px 14px;font-size:.9rem;transition:border-color .2s;">
                         <span class="text-danger small d-block mt-1" id="err_holiday_name"></span>
                     </div>
@@ -198,8 +192,7 @@
                             style="font-weight:600;font-size:.83rem;color:#374151;letter-spacing:.2px;margin-bottom:6px;">
                             START DATE
                         </label>
-                        <input type="date" id="start_date" class="form-control"
-                            placeholder="e.g. 2023-01-01"
+                        <input type="date" id="start_date" class="form-control" placeholder="e.g. 2023-01-01"
                             style="border-radius:10px;border:1.5px solid #e5e7eb;padding:10px 14px;font-size:.9rem;transition:border-color .2s;">
                         <span class="text-danger small d-block mt-1" id="err_start_date"></span>
                     </div>
@@ -209,8 +202,7 @@
                             style="font-weight:600;font-size:.83rem;color:#374151;letter-spacing:.2px;margin-bottom:6px;">
                             END DATE
                         </label>
-                        <input type="date" id="end_date" class="form-control"
-                            placeholder="e.g. 2023-01-01"
+                        <input type="date" id="end_date" class="form-control" placeholder="e.g. 2023-01-01"
                             style="border-radius:10px;border:1.5px solid #e5e7eb;padding:10px 14px;font-size:.9rem;transition:border-color .2s;">
                         <span class="text-danger small d-block mt-1" id="err_end_date"></span>
                     </div>
@@ -505,12 +497,22 @@
 
         /* ── Responsive ── */
         @media (max-width: 576px) {
-            .card-body { padding: 16px !important; }
-            #statsRow .col-md-4 { margin-bottom: 10px; }
-            .modal-dialog { margin: 10px; }
-            .modal-lg { max-width: calc(100% - 20px); }
-        }
+            .card-body {
+                padding: 16px !important;
+            }
 
+            #statsRow .col-md-4 {
+                margin-bottom: 10px;
+            }
+
+            .modal-dialog {
+                margin: 10px;
+            }
+
+            .modal-lg {
+                max-width: calc(100% - 20px);
+            }
+        }
     </style>
 @stop
 
@@ -577,22 +579,55 @@
                     },
                     {
                         data: 'holiday_name',
-                        render: name =>
-                            `<span style="font-weight:600;color:#1a1f36;">${name}</span>`
+                        render: name => `
+        <span style="
+            background:#eef2ff;
+            color:#4338ca;
+            padding:6px 14px;
+            border-radius:20px;
+            font-size:13px;
+            font-weight:600;
+        ">
+            <i class="fas fa-calendar-day me-1"></i>
+            ${name}
+        </span>
+    `
                     },
                     {
                         data: 'start_date',
-                        render: date =>
-                            date ?
-                            `<span>${date}</span>` :
-                            '<span style="color:#d1d5db;">—</span>'
+                        render: date => date ?
+                            `
+            <span style="
+                background:#ecfdf5;
+                color:#059669;
+                padding:6px 14px;
+                border-radius:20px;
+                font-size:13px;
+                font-weight:600;
+            ">
+                <i class="fas fa-calendar-plus me-1"></i>
+                ${date}
+            </span>
+        ` :
+                            '<span class="text-muted">—</span>'
                     },
                     {
                         data: 'end_date',
-                        render: date =>
-                            date ?
-                            `<span>${date}</span>` :
-                            '<span style="color:#d1d5db;">—</span>'
+                        render: date => date ?
+                            `
+            <span style="
+                background:#fef2f2;
+                color:#dc2626;
+                padding:6px 14px;
+                border-radius:20px;
+                font-size:13px;
+                font-weight:600;
+            ">
+                <i class="fas fa-calendar-check me-1"></i>
+                ${date}
+            </span>
+        ` :
+                            '<span class="text-muted">—</span>'
                     },
                     {
                         data: 'description',
@@ -622,15 +657,19 @@
                         className: 'text-center',
                         render: (id, t, row) => `
                         <div class="d-flex align-items-center justify-content-center" style="gap:6px;">
+                            @can('holiday.edit')
                             <button type="button" class="btn-edit-row btn-edit"
                                     data-id="${id}" data-toggle="tooltip" title="Edit">
                                 <i class="fas fa-pen"></i>
                             </button>
+                            @endcan
+                            @can('holiday.delete')
                             <button type="button" class="btn-delete-row btn-delete"
                                     data-id="${id}" data-name="${row.holiday_name}"
                                     data-toggle="tooltip" title="Delete">
                                 <i class="fas fa-trash"></i>
                             </button>
+                            @endcan
                         </div>
                     `
                     }
@@ -638,7 +677,7 @@
             });
 
             // Custom Search
-            $('#searchHoliday').on('keyup', function () {
+            $('#searchHoliday').on('keyup', function() {
                 let value = $(this).val();
 
                 if (value.length > 0) {
@@ -650,7 +689,7 @@
                 table.search(value).draw();
             });
 
-            $('#clearSearch').on('click', function () {
+            $('#clearSearch').on('click', function() {
                 $('#searchHoliday').val('');
                 $(this).hide();
                 table.search('').draw();
@@ -694,7 +733,7 @@
                             $('#start_date').val(d.start_date);
                             $('#end_date').val(d.end_date);
                             $('#description').val(d.description ?? '');
-                            $('#is_paid').val(d.is_paid? '1' : '0');
+                            $('#is_paid').val(d.is_paid ? '1' : '0');
                             $('#status').val(d.status);
                         }
                     })
@@ -834,8 +873,5 @@
                 });
             }
         });
-
-
-    
     </script>
 @stop

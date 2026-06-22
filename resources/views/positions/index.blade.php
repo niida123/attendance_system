@@ -640,10 +640,18 @@
                     },
                     {
                         data: 'position_name',
-                        render: name => `
-                            <div class="d-flex align-items-center" style="gap:10px;">
-                                <span style="font-weight:600;color:#1a1f36;font-size:.875rem;">${name}</span>
-                            </div>`
+                        render: name => `                               
+                            <span class="badge"
+                                style="
+                                    background:#f3f0ff;
+                                    color:#6d28d9;
+                                    padding:7px 14px;
+                                    border-radius:999px;
+                                    font-weight:600;
+                                    font-size:12px;
+                                ">
+                                ${name}
+                            </span>`
                     },
                     {
                         data: 'department.department_name',

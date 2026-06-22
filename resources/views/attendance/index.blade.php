@@ -231,7 +231,6 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
-
         /* ── Stats Row: 2x2 on all screens below desktop ── */
         @media (max-width: 992px) {
             #statsRow .col-md-3 {
@@ -246,16 +245,17 @@
                 font-size: 1.15rem !important;
             }
 
-            #statsRow > .col-md-3 > div {
+            #statsRow>.col-md-3>div {
                 padding: 12px 14px !important;
                 gap: 10px !important;
             }
 
-            #statsRow > .col-md-3 > div > div:first-child {
+            #statsRow>.col-md-3>div>div:first-child {
                 width: 36px !important;
                 height: 36px !important;
             }
         }
+
         #attendanceTable tbody tr {
             transition: background .15s;
         }
@@ -507,8 +507,29 @@
                     {
                         data: 'employee',
                         render: emp => emp ?
-                            `<span style="font-weight:600;color:#1a1f36;">${emp.first_name ?? ''} ${emp.last_name ?? ''}</span>` :
-                            '<span style="color:#d1d5db;">—</span>'
+                            `
+            <span style="
+                background:#eef2ff;
+                color:#4338ca;
+                padding:6px 14px;
+                border-radius:20px;
+                font-size:13px;
+                font-weight:600;
+            ">
+                ${emp.first_name ?? ''} ${emp.last_name ?? ''}
+            </span>
+        ` :
+                            `
+            <span style="
+                background:#f3f4f6;
+                color:#9ca3af;
+                padding:6px 14px;
+                border-radius:20px;
+                font-size:13px;
+            ">
+                —
+            </span>
+        `
                     },
                     {
                         data: 'attendance_date',
@@ -517,8 +538,7 @@
                                 new Date(d).toLocaleDateString('en-CA', {
                                     timeZone: 'Asia/Phnom_Penh'
                                 })
-                                }</span>` :
-                            '<span style="color:#d1d5db;">—</span>'
+                                }</span>` : '<span style="color:#d1d5db;">—</span>'
                     },
                     // Check In
                     {
@@ -538,8 +558,7 @@
                     {
                         data: 'working_hours',
                         render: h => h != null ?
-                            `<span>${h} hr</span>` :
-                            '<span style="color:#d1d5db;">—</span>'
+                            `<span>${h} hr</span>` : '<span style="color:#d1d5db;">—</span>'
                     },
                     {
                         data: 'late_minutes',

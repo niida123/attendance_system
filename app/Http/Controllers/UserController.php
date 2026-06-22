@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Role;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use App\Models\Role;
 
 class UserController extends Controller
 {
@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $roles     = Role::orderBy('role_name')->get();
+        $roles     = Role::orderBy('name')->get();
         $employees = Employee::orderBy('first_name')->get();
 
         return view('users.index', compact('roles', 'employees'));
@@ -28,7 +28,10 @@ class UserController extends Controller
      */
     public function getData()
     {
-        $users = User::with(['role', 'employee'])
+        // Eager-load the real Spatie relation ('roles'), not the old 'role' relation —
+        // the User model's getRoleAttribute() accessor will use this loaded collection
+        // automatically, so 'role' still appears correctly in the JSON output below.
+        $users = User::with(['roles', 'employee'])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -44,14 +47,27 @@ class UserController extends Controller
             'username'    => 'required|string|max:255',
             'email'       => 'required|email|unique:users,email',
             'password'    => ['required', 'confirmed', Password::min(8)],
-            'role_id'     => 'required|exists:roles,role_id',
+            'id'          => 'required|exists:roles,id', // role id from the select
             'employee_id' => 'nullable|exists:employees,employee_id',
             'status'      => 'required|in:Active,Inactive',
+        ],
+        // Custom error messages for password validation
+        [
+            'password.min'       => 'Password must be at least 8 characters.',
+            'password.confirmed' => 'Password confirmation does not match.',
+            'password.required'  => 'Password is required.',
         ]);
+
+        $roleId = $validated['id'];
+        unset($validated['id']); // not a user column — would be silently dropped anyway, but be explicit
 
         $validated['password'] = Hash::make($validated['password']);
 
         $user = User::create($validated);
+
+        // This is the step that was missing — actually assign the role via Spatie
+        $role = Role::findById($roleId);
+        $user->syncRoles([$role->name]);
 
         return response()->json([
             'success' => true,
@@ -64,11 +80,18 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::with(['role', 'employee'])->findOrFail($id);
+        $user = User::with(['roles', 'employee'])->findOrFail($id);
 
         return response()->json([
             'success' => true,
-            'data'    => $user,
+            'data'    => [
+                'id'          => $user->id,
+                'username'    => $user->username,
+                'email'       => $user->email,
+                'role_id'     => optional($user->roles->first())->id,
+                'employee_id' => $user->employee_id,
+                'status'      => $user->status,
+            ],
         ]);
     }
 
@@ -83,12 +106,18 @@ class UserController extends Controller
             'username'    => 'required|string|max:255',
             'email'       => 'required|email|unique:users,email,' . $user->id,
             'password'    => ['nullable', 'confirmed', Password::min(8)],
-            'role_id'     => 'required|exists:roles,role_id',
+            'id'          => 'required|exists:roles,id',
             'employee_id' => 'nullable|exists:employees,employee_id',
             'status'      => 'required|in:Active,Inactive',
+        ],
+        [
+            'password.min'       => 'Password must be at least 8 characters.',
+            'password.confirmed' => 'Password confirmation does not match.',
         ]);
 
-        // Only update password if a new one was provided
+        $roleId = $validated['id'];
+        unset($validated['id']);
+
         if (!empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         } else {
@@ -96,6 +125,9 @@ class UserController extends Controller
         }
 
         $user->update($validated);
+
+        $role = Role::findById($roleId);
+        $user->syncRoles([$role->name]);
 
         return response()->json([
             'success' => true,
@@ -110,7 +142,6 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // Prevent deleting the currently authenticated user
         if (Auth::id() !== null && Auth::id() === $user->getKey()) {
             return response()->json([
                 'success' => false,

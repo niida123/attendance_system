@@ -185,7 +185,7 @@
     <style>
         #btnCheckIn:hover  { transform:translateY(-2px); box-shadow:0 10px 28px rgba(5,150,105,.45) !important; }
         #btnCheckOut:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(245,158,11,.45) !important; }
-        #btnCheckIn:disabled, #btnCheckOut:disabled { opacity:.55; transform:none !important; cursor:not-allowed; }
+        #btnCheckIn:disabled, #btnCheckOut:disabled { opacity:.55; transform:none !important; cursor:not-allowed;pointer-events:none; }
 
         .log-item {
             display:flex;
@@ -279,22 +279,63 @@
             if (photoPath.startsWith('http://') || photoPath.startsWith('https://') || photoPath.startsWith('/')) {
                 return photoPath;
             }
-            return `${STORAGE_BASE}/${photoPath}`;
+            return `${STORAGE_BASE}/${photoPath}`; // ← STORAGE_BASE = asset('storage')
         }
 
         /* ── Load today's data ──────────────────────────────── */
         function loadToday() {
             $.get(TODAY_URL)
                 .done(function (res) {
-                    if (!res.success) return;
+                    if (!res.success) {
+                        if (res.no_employee) {
+                            // Show user avatar if available
+                            if (res.user_avatar) {
+                                $('#empPhoto').attr('src', res.user_avatar).show();
+                                $('#empInitials').hide();
+                            } else {
+                                $('#empInitials').text('?');
+                            }
+
+                            $('#empName').text('No employee linked');
+                            $('#empPosition').text('—');
+                            $('#shiftInfo').hide();
+                            $('#shiftEmpty').show();
+                            $('#btnCheckIn').prop('disabled', true);
+                            $('#btnCheckOut').prop('disabled', true);
+                            $('#actionHint').html(
+                                '<span style="color:#ef4444;"><i class="fas fa-user-slash mr-1"></i>Your account is not linked to an employee record.</span>'
+                            );
+                            setRing(0, '#9ca3af');
+                            $('#ringIcon').attr('class','fas fa-user-slash').css('color','#9ca3af');
+                            $('#ringLabel').text('N/A');
+                        }
+                        return;
+                    }
 
                     const emp = res.employee;
                     const att = res.attendance;   // null if not yet checked in
                     const shift = res.shift;       // null if no shift assigned
 
+                    if (!emp) {
+                        $('#empName').text('No employee linked');
+                        $('#empPosition').text('—');
+                        $('#empInitials').text('?');
+                        $('#shiftInfo').hide();
+                        $('#shiftEmpty').show();
+                        $('#btnCheckIn').prop('disabled', true);
+                        $('#btnCheckOut').prop('disabled', true);
+                        $('#actionHint').html(
+                            '<span style="color:#ef4444;"><i class="fas fa-user-slash mr-1"></i>Your account is not linked to an employee record.</span>'
+                        );
+                        setRing(0, '#9ca3af');
+                        $('#ringIcon').attr('class','fas fa-user-slash').css('color','#9ca3af');
+                        $('#ringLabel').text('N/A');
+                        return; // ← stop here, don't process further
+                    }
+
                     /* Employee image & info */
                     const initials = ((emp.first_name?.[0] ?? '') + (emp.last_name?.[0] ?? '')).toUpperCase();
-                    const photoUrl = buildPhotoUrl(emp.photo);
+                    const photoUrl = buildPhotoUrl(emp.photo) || res.user_avatar;
 
                     $('#empInitials').text(initials || '?');
                     if (photoUrl) {

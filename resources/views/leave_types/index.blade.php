@@ -46,15 +46,12 @@
 
                         <!-- Search Box -->
                         <div style="position: relative; width:250px; min-width:180px;">
-                            <input type="text"
-                                class="form-control form-control-sm"
-                                placeholder="Search leave type or description..."
-                                id="searchLeaveType"
+                            <input type="text" class="form-control form-control-sm"
+                                placeholder="Search leave type or description..." id="searchLeaveType"
                                 style="padding-right:35px;">
 
-                            <i class="fas fa-times"
-                            id="clearSearch"
-                            style="display:none;
+                            <i class="fas fa-times" id="clearSearch"
+                                style="display:none;
                                     position:absolute;
                                     right:10px;
                                     top:50%;
@@ -65,12 +62,9 @@
                         </div>
 
                         <!-- Add Button -->
-                        <button type="button"
-                                class="btn btn-sm"
-                                data-toggle="modal"
-                                data-target="#leaveTypeModal"
-                                id="btnCreate"
-                                style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-weight:600;font-size:.82rem;letter-spacing:.2px;box-shadow:0 4px 14px rgba(79,70,229,.35);">
+                        <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#leaveTypeModal"
+                            id="btnCreate"
+                            style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-weight:600;font-size:.82rem;letter-spacing:.2px;box-shadow:0 4px 14px rgba(79,70,229,.35);">
                             <i class="fas fa-plus mr-1"></i> Add Leave Type
                         </button>
 
@@ -129,34 +123,34 @@
                     {{-- Table --}}
                     <div style="background:#fff;border-radius:12px;border:1px solid #f0f0f5;overflow:hidden;">
                         <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-                        <table id="leaveTypeTable" class="table table-hover w-100 mb-0" style="min-width:700px;">
-                            <thead>
-                                <tr style="background:#f8f9ff;">
-                                    <th width="50"
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        #</th>
-                                    <th
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        Leave Type Name</th>
-                                    <th
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        Max Days Per Year</th>
-                                    <th 
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        Description</th>
-                                    <th width="140"
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        Status</th>
-                                    <th width="140"
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        Created At</th>
-                                    <th width="130" class="text-center"
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                            <table id="leaveTypeTable" class="table table-hover w-100 mb-0" style="min-width:700px;">
+                                <thead>
+                                    <tr style="background:#f8f9ff;">
+                                        <th width="50"
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            #</th>
+                                        <th
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Leave Type Name</th>
+                                        <th
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Max Days Per Year</th>
+                                        <th
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Description</th>
+                                        <th width="140"
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Status</th>
+                                        <th width="140"
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Created At</th>
+                                        <th width="130" class="text-center"
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -198,8 +192,7 @@
                             style="font-weight:600;font-size:.83rem;color:#374151;letter-spacing:.2px;margin-bottom:6px;">
                             LEAVE TYPE NAME <span class="text-danger">*</span>
                         </label>
-                        <input type="text" id="leave_name" class="form-control"
-                            placeholder="e.g. Sick Leave"
+                        <input type="text" id="leave_name" class="form-control" placeholder="e.g. Sick Leave"
                             style="border-radius:10px;border:1.5px solid #e5e7eb;padding:10px 14px;font-size:.9rem;transition:border-color .2s;">
                         <span class="text-danger small d-block mt-1" id="err_leave_name"></span>
                     </div>
@@ -209,8 +202,7 @@
                             style="font-weight:600;font-size:.83rem;color:#374151;letter-spacing:.2px;margin-bottom:6px;">
                             MAX DAYS PER YEAR <span class="text-danger">*</span>
                         </label>
-                        <input type="number" id="max_days_per_year" class="form-control"
-                            placeholder="e.g. 10"
+                        <input type="number" id="max_days_per_year" class="form-control" placeholder="e.g. 10"
                             style="border-radius:10px;border:1.5px solid #e5e7eb;padding:10px 14px;font-size:.9rem;transition:border-color .2s;">
                         <span class="text-danger small d-block mt-1" id="err_max_days_per_year"></span>
                     </div>
@@ -317,7 +309,7 @@
      Styles
      ============================================================ --}}
 @section('css')
-     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
         /* ── Table rows ── */
@@ -491,12 +483,22 @@
 
         /* ── Responsive ── */
         @media (max-width: 576px) {
-            .card-body { padding: 16px !important; }
-            #statsRow .col-md-4 { margin-bottom: 10px; }
-            .modal-dialog { margin: 10px; }
-            .modal-lg { max-width: calc(100% - 20px); }
-        }
+            .card-body {
+                padding: 16px !important;
+            }
 
+            #statsRow .col-md-4 {
+                margin-bottom: 10px;
+            }
+
+            .modal-dialog {
+                margin: 10px;
+            }
+
+            .modal-lg {
+                max-width: calc(100% - 20px);
+            }
+        }
     </style>
 @stop
 
@@ -564,13 +566,35 @@
                     },
                     {
                         data: 'leave_name',
-                        render: name =>
-                            `<span style="font-weight:600;color:#1a1f36;">${name}</span>`
+                        render: name => `
+                            <span class="badge"
+                                style="
+                                    background:#f3f0ff;
+                                    color:#6d28d9;
+                                    padding:7px 14px;
+                                    border-radius:999px;
+                                    font-weight:600;
+                                    font-size:12px;
+                                ">
+                                ${name}
+                            </span>
+                        `
                     },
                     {
                         data: 'max_days_per_year',
-                        render: d =>
-                            `<span style="color:#6b7280;">${d} day${d > 1 ? 's' : ''}/year</span>`
+                        render: d => `
+        <span class="badge"
+              style="
+                background:#ecfeff;
+                color:#0f766e;
+                padding:7px 14px;
+                border-radius:999px;
+                font-weight:600;
+                font-size:12px;
+              ">
+            ${d} Days / Year
+        </span>
+    `
                     },
                     {
                         data: 'description',
@@ -614,7 +638,7 @@
             });
 
             // Custom Search
-            $('#searchLeaveType').on('keyup', function () {
+            $('#searchLeaveType').on('keyup', function() {
                 let value = $(this).val();
 
                 if (value.length > 0) {
@@ -626,7 +650,7 @@
                 table.search(value).draw();
             });
 
-            $('#clearSearch').on('click', function () {
+            $('#clearSearch').on('click', function() {
                 $('#searchLeaveType').val('');
                 $(this).hide();
                 table.search('').draw();
@@ -806,8 +830,5 @@
                 });
             }
         });
-
-
-    
     </script>
 @stop

@@ -8,7 +8,7 @@
     <div class="d-flex align-items-center justify-content-between">
         <div>
             <h1 class="m-0 font-weight-bold" style="color:#1a1f36;font-size:1.4rem;letter-spacing:-0.3px;">
-                <i class="fas fa-briefcase mr-2" style="color:#4f46e5;"></i> Employees
+                <i class="fas fa-users mr-2" style="color:#4f46e5;"></i> Employees
             </h1>
             <ol class="breadcrumb mt-1 mb-0" style="background:transparent;padding:0;font-size:.8rem;">
                 <li class="breadcrumb-item"><a href="{{ url('/') }}" style="color:#4f46e5;">Home</a></li>
@@ -862,18 +862,58 @@
                     {
                         data: null,
                         render: (d, type, row) => {
+
                             if (type === 'filter' || type === 'sort') {
                                 return `${row.first_name} ${row.last_name} ${row.employee_code}`;
                             }
-                            const name     = `${row.first_name} ${row.last_name}`;
-                            const code     = `<div style="font-size:.72rem;color:#9ca3af;">${row.employee_code}</div>`;
-                            const avatar   = renderEmployeeAvatar(row.first_name, row.last_name, row.photo, {
-                                size: 36,
-                                borderRadius: '50%',
-                                marginRight: '8px',
-                                imageStyle: 'border:0;'
-                            });
-                            return `<div class="d-flex align-items-center">${avatar}<div><div style="font-weight:600;color:#1a1f36;line-height:1.3;">${name}</div>${code}</div></div>`;
+
+                            const name = `${row.first_name} ${row.last_name}`;
+
+                            const avatar = renderEmployeeAvatar(
+                                row.first_name,
+                                row.last_name,
+                                row.photo,
+                                {
+                                    size: 36,
+                                    borderRadius: '50%',
+                                    marginRight: '10px',
+                                    imageStyle: 'border:1px solid #e5e7eb;'
+                                }
+                            );
+
+                            return `
+                                <div class="d-flex align-items-center" style="gap:10px;">
+
+                                    ${avatar}
+
+                                    <div>
+
+                                        <div style="
+                                            font-weight:600;
+                                            color:#111827;
+                                            font-size:14px;
+                                            line-height:1.2;
+                                        ">
+                                            ${name}
+                                        </div>
+
+                                        <span style="
+                                            display:inline-block;
+                                            margin-top:4px;
+                                            background:#eef2ff;
+                                            color:#4338ca;
+                                            padding:4px 12px;
+                                            border-radius:20px;
+                                            font-size:12px;
+                                            font-weight:600;
+                                        ">
+                                            ${row.employee_code}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+                            `;
                         }
                     },
                     {

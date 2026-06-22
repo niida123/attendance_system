@@ -41,7 +41,12 @@ class AttendanceController extends Controller
             $user = Auth::user();
 
             if (!$user || !$user->employee_id) {
-                return response()->json(['success' => false, 'message' => 'No employee linked to this account.'], 422);
+                return response()->json([
+                    'success'     => false,
+                    'no_employee' => true,
+                    'user_avatar' => $user->avatar ? asset('storage/' . $user->avatar) : null,
+                    'message'     => 'No employee linked to this account.',
+                ]);
             }
 
             $employeeId = $user->employee_id;
@@ -89,6 +94,7 @@ class AttendanceController extends Controller
                 'attendance' => $attendance,
                 'shift'      => $shift,
                 'is_holiday' => (bool) $holiday,
+                'user_avatar' => $user->avatar ? asset('storage/' . $user->avatar) : null,
                 'holiday'    => $holiday ? [
                     'holiday_id'   => $holiday->holiday_id,
                     'holiday_name' => $holiday->holiday_name,
@@ -113,7 +119,13 @@ class AttendanceController extends Controller
     public function recent()
     {
         try {
-            $employeeId = Auth::user()->employee_id;
+
+            $user = Auth::user();
+
+            if (!$user || !$user->employee_id) {
+                return response()->json(['success' => true, 'data' => []]);
+            }
+            $employeeId = $user->employee_id;
             $today = Carbon::now('Asia/Phnom_Penh')->format('Y-m-d');
 
             $attendances = Attendance::where('employee_id', $employeeId)
@@ -255,7 +267,14 @@ class AttendanceController extends Controller
      */
     public function checkOut(Request $request)
     {
-        $employeeId = Auth::user()->employee_id;
+        $user = Auth::user();
+            if (!$user->employee_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Your account is not linked to an employee record.',
+            ], 422);
+        }
+        $employeeId = $user->employee_id;
         $today = Carbon::now('Asia/Phnom_Penh')->format('Y-m-d');
 
         // Save log

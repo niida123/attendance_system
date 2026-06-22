@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\Holiday;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HolidayController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */

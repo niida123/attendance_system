@@ -551,7 +551,19 @@
                     {
                         data: 'department_name',
                         render: name =>
-                            `<span style="font-weight:600;color:#1a1f36;">${name}</span>`
+                            `
+                            <span class="badge"
+                                style="
+                                    background:#f3f0ff;
+                                    color:#6d28d9;
+                                    padding:7px 14px;
+                                    border-radius:999px;
+                                    font-weight:600;
+                                    font-size:12px;
+                                ">
+                                ${name}
+                            </span>
+                        `
                     },
                     {
                         data: 'description',

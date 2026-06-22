@@ -22,8 +22,8 @@ class RoleController extends Controller
     public function getData()
     {
         $roles = Role::select(
-            'role_id',
-            'role_name',
+            'id',
+            'name',
             'description',
             'status',
             'created_at'
@@ -42,7 +42,7 @@ class RoleController extends Controller
     {
         //
         $validator = Validator::make($request->all(), [
-            'role_name'   => 'required|string|max:255|unique:roles,role_name',
+            'name'   => 'required|string|max:255|unique:roles,name',
             'description' => 'nullable|string|max:1000',
             'status'      => 'required|in:Active,Inactive',
         ]);
@@ -54,11 +54,12 @@ class RoleController extends Controller
             ], 422);
         }
 
-        $role = Role::create($request->only([
-            'role_name',
-            'description',
-            'status'
-        ]));
+        $role = Role::create([
+            'name' => $request->name,
+            'guard_name' => 'web',
+            'description' => $request->description,
+            'status' => $request->status,
+        ]);
 
         return response()->json([
             'success' => true,
@@ -89,7 +90,7 @@ class RoleController extends Controller
         //
         $role = Role::findOrFail($id);
         $validator = Validator::make($request->all(), [
-            'role_name'   => 'required|string|max:255|unique:roles,role_name,' . $id . ',role_id',
+            'name'   => 'required|string|max:255|unique:roles,name,' . $id . ',id',
             'description' => 'nullable|string|max:1000',
             'status'      => 'required|in:Active,Inactive',
         ]);
@@ -102,7 +103,7 @@ class RoleController extends Controller
         }
 
         $role->update($request->only([
-            'role_name',
+            'name',
             'description',
             'status'
         ]));
@@ -111,7 +112,7 @@ class RoleController extends Controller
             'success' => true,
             'message' => 'Role updated successfully',
             'data'    => $role
-        ], 201);
+        ], 200);
     }
 
     /**
@@ -121,7 +122,7 @@ class RoleController extends Controller
     {
         $role = Role::findOrFail($id);
 
-        if ($role->users()->exists()) {
+        if ($role->assignedUsers()->exists()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Cannot delete: this role has linked users.',

@@ -46,15 +46,11 @@
 
                         <!-- Search Box -->
                         <div style="position: relative; width:250px; min-width:180px;">
-                            <input type="text"
-                                class="form-control form-control-sm"
-                                placeholder="Search role..."
-                                id="searchRole"
-                                style="padding-right:35px;">
+                            <input type="text" class="form-control form-control-sm" placeholder="Search role..."
+                                id="searchRole" style="padding-right:35px;">
 
-                            <i class="fas fa-times"
-                            id="clearSearch"
-                            style="display:none;
+                            <i class="fas fa-times" id="clearSearch"
+                                style="display:none;
                                     position:absolute;
                                     right:10px;
                                     top:50%;
@@ -65,12 +61,9 @@
                         </div>
 
                         <!-- Add Button -->
-                        <button type="button"
-                                class="btn btn-sm"
-                                data-toggle="modal"
-                                data-target="#roleModal"
-                                id="btnCreate"
-                                style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-weight:600;font-size:.82rem;letter-spacing:.2px;box-shadow:0 4px 14px rgba(79,70,229,.35);">
+                        <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#roleModal"
+                            id="btnCreate"
+                            style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-weight:600;font-size:.82rem;letter-spacing:.2px;box-shadow:0 4px 14px rgba(79,70,229,.35);">
                             <i class="fas fa-plus mr-1"></i> Add Role
                         </button>
 
@@ -129,31 +122,31 @@
                     {{-- Table --}}
                     <div style="background:#fff;border-radius:12px;border:1px solid #f0f0f5;overflow:hidden;">
                         <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-                        <table id="roleTable" class="table table-hover w-100 mb-0" style="min-width:700px;">
-                            <thead>
-                                <tr style="background:#f8f9ff;">
-                                    <th width="50"
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        #</th>
-                                    <th
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        Role Name</th>
-                                    <th
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        Description</th>
-                                    <th width="110"
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        Status</th>
-                                    <th width="140"
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        Created At</th>
-                                    <th width="130" class="text-center"
-                                        style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
-                                        Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                            <table id="roleTable" class="table table-hover w-100 mb-0" style="min-width:700px;">
+                                <thead>
+                                    <tr style="background:#f8f9ff;">
+                                        <th width="50"
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            #</th>
+                                        <th
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Role Name</th>
+                                        <th
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Description</th>
+                                        <th width="110"
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Status</th>
+                                        <th width="140"
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Created At</th>
+                                        <th width="130" class="text-center"
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -188,17 +181,17 @@
                 </div>
 
                 <div class="modal-body" style="padding:28px 24px;background:#fff;">
-                    <input type="hidden" id="role_id">
+                    <input type="hidden" id="id">
 
                     <div class="form-group mb-4">
-                        <label for="role_name"
+                        <label for="name"
                             style="font-weight:600;font-size:.83rem;color:#374151;letter-spacing:.2px;margin-bottom:6px;">
                             ROLE NAME <span class="text-danger">*</span>
                         </label>
-                        <input type="text" id="role_name" class="form-control"
+                        <input type="text" id="name" class="form-control"
                             placeholder="e.g. Administrator, Manager, Employee"
                             style="border-radius:10px;border:1.5px solid #e5e7eb;padding:10px 14px;font-size:.9rem;transition:border-color .2s;">
-                        <span class="text-danger small d-block mt-1" id="err_role_name"></span>
+                        <span class="text-danger small d-block mt-1" id="err_name"></span>
                     </div>
 
                     <div class="form-group mb-4">
@@ -307,15 +300,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
         /* ── Table rows ── */
-        #departmentTable tbody tr {
+        #roleTable tbody tr {
             transition: background .15s;
         }
 
-        #departmentTable tbody tr:hover {
+        #roleTable tbody tr:hover {
             background: #f5f6ff !important;
         }
 
-        #departmentTable tbody td {
+        #roleTable tbody td {
             padding: 13px 20px;
             vertical-align: middle;
             font-size: .875rem;
@@ -465,12 +458,22 @@
 
         /* ── Responsive ── */
         @media (max-width: 576px) {
-            .card-body { padding: 16px !important; }
-            #statsRow .col-md-4 { margin-bottom: 10px; }
-            .modal-dialog { margin: 10px; }
-            .modal-lg { max-width: calc(100% - 20px); }
-        }
+            .card-body {
+                padding: 16px !important;
+            }
 
+            #statsRow .col-md-4 {
+                margin-bottom: 10px;
+            }
+
+            .modal-dialog {
+                margin: 10px;
+            }
+
+            .modal-lg {
+                max-width: calc(100% - 20px);
+            }
+        }
     </style>
 @stop
 
@@ -518,7 +521,7 @@
                     },
                     error: function(xhr) {
                         console.error('DataTable AJAX error:', xhr.status, xhr.responseText);
-                        toastr.error('Failed to load departments.');
+                        toastr.error('Failed to load role.');
                     }
                 },
                 language: {
@@ -537,9 +540,20 @@
                         orderable: false
                     },
                     {
-                        data: 'role_name',
-                        render: name =>
-                            `<span style="font-weight:600;color:#1a1f36;">${name}</span>`
+                        data: 'name',
+                        render: name => `
+                            <span class="badge"
+                                style="
+                                    background:#f3f0ff;
+                                    color:#6d28d9;
+                                    padding:7px 14px;
+                                    border-radius:999px;
+                                    font-weight:600;
+                                    font-size:12px;
+                                ">
+                                ${name}
+                            </span>
+                        `
                     },
                     {
                         data: 'description',
@@ -560,7 +574,7 @@
                             `<span style="color:#9ca3af;font-size:.82rem;">${new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>`
                     },
                     {
-                        data: 'role_id',
+                        data: 'id',
                         orderable: false,
                         searchable: false,
                         className: 'text-center',
@@ -571,7 +585,7 @@
                                 <i class="fas fa-pen"></i>
                             </button>
                             <button type="button" class="btn-delete-row btn-delete"
-                                    data-id="${id}" data-name="${row.role_name}"
+                                    data-id="${id}" data-name="${row.name}"
                                     data-toggle="tooltip" title="Delete">
                                 <i class="fas fa-trash"></i>
                             </button>
@@ -582,7 +596,7 @@
             });
 
             // Custom Search
-            $('#searchRole').on('keyup', function () {
+            $('#searchRole').on('keyup', function() {
                 let value = $(this).val();
 
                 if (value.length > 0) {
@@ -594,7 +608,7 @@
                 table.search(value).draw();
             });
 
-            $('#clearSearch').on('click', function () {
+            $('#clearSearch').on('click', function() {
                 $('#searchRole').val('');
                 $(this).hide();
                 table.search('').draw();
@@ -633,8 +647,8 @@
                     .done(function(res) {
                         if (res.success) {
                             const d = res.data;
-                            $('#role_id').val(d.role_id);
-                            $('#role_name').val(d.role_name);
+                            $('#id').val(d.id);
+                            $('#name').val(d.name);
                             $('#description').val(d.description ?? '');
                             $('#status').val(d.status);
                         }
@@ -659,9 +673,9 @@
 
             /* ── SAVE ───────────────────────────────────────────────── */
             $(document).on('click', '#btnSave', function() {
-                const id = $('#role_id').val();
+                const id = $('#id').val();
                 const payload = {
-                    role_name: $('#role_name').val().trim(),
+                    name: $('#name').val().trim(),
                     description: $('#description').val().trim(),
                     status: $('#status').val(),
                     _token: CSRF,
@@ -746,13 +760,13 @@
 
             /* ── Helpers ────────────────────────────────────────────── */
             function resetForm() {
-                $('#role_id, #role_name, #description').val('');
+                $('#id, #name, #description').val('');
                 $('#status').val('');
                 clearErrors();
             }
 
             function clearErrors() {
-                ['role_name', 'description', 'status'].forEach(function(f) {
+                ['name', 'description', 'status'].forEach(function(f) {
                     $('#' + f).removeClass('is-invalid');
                     $('#err_' + f).text('');
                 });
@@ -766,8 +780,5 @@
                 });
             }
         });
-
-
-    
     </script>
 @stop

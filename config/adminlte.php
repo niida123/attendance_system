@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<i class="fas fa-clock mr-2"></i><b>ATTENDANCE</b> SYSTEM',
+    'logo' => '<i class="fas fa-clock mr-2" style="color: #5a0b8f;"></i><b style="color: #5a0b8f;">ATTENDANCE</b> <span style="color: #5a0b8f;">SYSTEM</span> ',
     'logo_img' => null,
     'logo_img_class' => null,
     'logo_img_xl' => null,
@@ -110,7 +110,7 @@ return [
     */
 
     'preloader' => [
-        'enabled' => true,
+        'enabled' => false,
         'mode' => 'fullscreen',
         'img' => [
             'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
@@ -313,84 +313,98 @@ return [
         // HR / CORE DATA
         // =====================
         [
-            'header' => 'HR MANAGEMENT'
+            'header' => 'HR MANAGEMENT',
+            'can'    => 'employee.view'
         ],
 
         [
             'text' => 'Employees',
             'url'  => 'employees',
             'icon' => 'fas fa-id-badge',
+            'can'     => 'employee.view',
         ],
         [
             'text' => 'Departments',
             'url'  => 'departments',
             'icon' => 'fas fa-building',
+            'can'     => 'department.view',
         ],
         [
             'text' => 'Positions',
             'url'  => 'positions',
             'icon' => 'fas fa-briefcase',
+            'can'     => 'position.view',
         ],
         [
             'text' => 'Roles',
             'url'  => 'roles',
             'icon' => 'fas fa-user-shield',
+            'can'     => 'role.view',
         ],
         [
             'text' => 'Users',
             'url'  => 'users',
             'icon' => 'fas fa-users',
+            'can'     => 'user.view',
         ],
 
         // =====================
         // ATTENDANCE
         // =====================
         [
-            'header' => 'ATTENDANCE'
+            'header' => 'ATTENDANCE',
+            'can'    => 'attendance.view'
         ],
         [
         'text' => 'Check In / Out',
         'url'  => 'check-in-out',
         'icon' => 'fas fa-fingerprint',
+        'can'     => 'attendance.check',
         ],
         [
         'text' => 'My Attendance',
         'url'  => 'my-attendance',
         'icon' => 'fas fa-calendar-check',
+        'can'     => 'attendance.view',
         ],
 
         [
             'text' => 'Attendance',
             'url'  => 'attendance',
             'icon' => 'fas fa-clock',
+            'can'     => 'attendance.view',
         ],
         [
             'text' => 'Attendance Logs',
             'url'  => 'attendance-logs',
             'icon' => 'fas fa-history',
+            'can'     => 'attendance.view',
         ],
         [
             'text' => 'Shifts',
             'url'  => 'shifts',
             'icon' => 'fas fa-business-time',
+            'can'     => 'shift.view',
         ],
         [
             'text' => 'Employee Shifts',
             'url'  => 'employee_shifts',
             'icon' => 'fas fa-user-clock',
+            'can'     => 'shift.view',
         ],
 
         // =====================
         // LEAVE SYSTEM
         // =====================
         [
-            'header' => 'LEAVE MANAGEMENT'
+            'header' => 'LEAVE MANAGEMENT',
+            'can'    => 'leave.view'
         ],
         [
             'text' => 'Leave Requests',
             'url'  => 'leave-requests',
             'icon' => 'fas fa-calendar-alt',
-            // 'can'     => 'admin',
+            'can'     => 'leave.view',
         ],
         [
             'text'    => 'My Leave',
@@ -401,11 +415,13 @@ return [
             'text' => 'Leave Types',
             'url'  => 'leave-types',
             'icon' => 'fas fa-calendar-minus',
+            'can'     => 'leave.view',
         ],
         [
             'text' => 'Holidays',
             'url'  => 'holidays',
             'icon' => 'fas fa-gift',
+            'can'     => 'holiday.view',
         ],
 
         // =====================
@@ -419,12 +435,13 @@ return [
             'text' => 'Profile',
             'url'  => 'profile',
             'icon' => 'fas fa-user',
+            'can'     => 'profile.view',
         ],
-        [
-            'text' => 'Logout',
-            'url'  => 'logout',
-            'icon' => 'fas fa-sign-out-alt',
-        ],
+        // [
+        //     'text' => 'Logout',
+        //     'url'  => 'logout',
+        //     'icon' => 'fas fa-sign-out-alt',
+        // ],
     ],
 
     /*
