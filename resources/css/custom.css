@@ -1,9 +1,32 @@
-.sidebar-light-purple,
-.main-sidebar {
-    background-color: rgba(255, 255, 255, 0.6) !important; /* adjust 0.6 for opacity level */
+/* LIGHT PURPLE SIDEBAR */
+.main-sidebar.sidebar-light-purple {
+    background-color: #f3e8ff !important; /* light purple background */
 }
 
-.sidebar-light-purple .nav-sidebar > .nav-item > .nav-link.active,
-.sidebar-light-purple .nav-sidebar > .nav-item > .nav-link:hover {
-    background-color: rgba(108, 84, 245, 0.15) !important; /* light purple hover/active tint */
+/* BRAND AREA */
+.main-sidebar.sidebar-light-purple .brand-link {
+    background-color: #ede9fe !important;
+    color: #4c1d95 !important;
+}
+
+/* MENU TEXT */
+.main-sidebar.sidebar-light-purple .nav-sidebar > .nav-item > .nav-link {
+    color: #4c1d95 !important;
+}
+
+/* HOVER */
+.main-sidebar.sidebar-light-purple .nav-sidebar > .nav-item > .nav-link:hover {
+    background-color: #e9d5ff !important;
+    color: #4c1d95 !important;
+}
+
+/* ACTIVE ITEM */
+.main-sidebar.sidebar-light-purple .nav-sidebar > .nav-item > .nav-link.active {
+    background-color: #d8b4fe !important;
+    color: #3b0764 !important;
+}
+
+.main-sidebar.sidebar-light-purple {
+    background-color: rgba(243, 232, 255, 0.8) !important;
+    backdrop-filter: blur(8px);
 }

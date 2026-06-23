@@ -73,18 +73,19 @@ class User extends Authenticatable
 
     public function adminlte_image()
     {
-        // 1. User's own uploaded avatar
-        if ($this->avatar) {
-            return asset('storage/' . $this->avatar);
-        }
-
-        // 2. Linked employee photo
-        if ($this->employee && $this->employee->photo) {
+        // Check if the user has an associated employee with a photo
+        if (
+            $this->employee &&
+            $this->employee->photo &&
+            file_exists(storage_path('app/public/' . $this->employee->photo))
+        ) {
             return asset('storage/' . $this->employee->photo);
         }
 
-        // 3. Fallback to generated initials avatar
-        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=4f46e5&color=fff';
+        // Fallback to a generated avatar based on the user's name
+        return 'https://ui-avatars.com/api/?name='
+            . urlencode($this->name)
+            . '&background=4f46e5&color=fff';
     }
 
     public function adminlte_desc()

@@ -38,11 +38,11 @@ class DashboardController extends Controller
         }
 
         // ── Admin / HR dashboard ────────────────────────────────
-        return $this->adminData($today, $month);
+        return $this->adminData($user, $today, $month);
     }
 
     // ── Admin Data ─────────────────────────────────────────────
-    private function adminData(string $today, string $month): \Illuminate\Http\JsonResponse
+    private function adminData($user,string $today, string $month): \Illuminate\Http\JsonResponse
     {
         $totalEmployees  = Employee::where('status', 'Active')->count();
         $presentToday    = Attendance::where('attendance_date', $today)
@@ -90,7 +90,12 @@ class DashboardController extends Controller
                             'name'       => $e->first_name . ' ' . $e->last_name,
                             'department' => $e->department?->department_name ?? '—',
                             'position'   => $e->position?->position_name ?? '—',
-                            'photo'      => $e->photo ? asset('storage/' . $e->photo) : null,
+                            'photo' => (
+                                $e->photo &&
+                                file_exists(storage_path('app/public/' . $e->photo))
+                            )
+                                ? asset('storage/' . $e->photo)
+                                : null,
                             'initials'   => strtoupper(substr($e->first_name,0,1) . substr($e->last_name,0,1)),
                         ]);
 
@@ -105,7 +110,12 @@ class DashboardController extends Controller
                             'start_date' => $r->start_date,
                             'end_date'   => $r->end_date,
                             'total_days' => $r->total_days,
-                            'photo'      => $r->employee?->photo ? asset('storage/' . $r->employee->photo) : null,
+                            'photo' => (
+                                $r->employee?->photo &&
+                                file_exists(storage_path('app/public/' . $r->employee->photo))
+                            )
+                                ? asset('storage/' . $r->employee->photo)
+                                : null,
                             'initials'   => strtoupper(substr($r->employee?->first_name,0,1) . substr($r->employee?->last_name,0,1)),
                         ]);
 
@@ -119,7 +129,7 @@ class DashboardController extends Controller
                                 'count' => $group->count(),
                             ])->values();
 
-        return response()->json([
+        $response = [
             'role'    => 'admin',
             'today'   => $today,
             'holiday' => $holiday ? $holiday->holiday_name : null,
@@ -135,24 +145,46 @@ class DashboardController extends Controller
             'absent_list'    => $absentList,
             'pending_list'   => $pendingList,
             'dept_breakdown' => $deptBreakdown,
-        ]);
-    }
+        ];
+
+        // Attach the admin's own personal employee dashboard data, if linked
+        if ($user->employee_id) {
+            $personal = $this->buildEmployeePayload($user, $today, $month);
+            $response['has_personal_view'] = true;
+            $response['personal']          = $personal;
+        } else {
+            $response['has_personal_view'] = false;
+        }
+
+        return response()->json($response);
+        }
 
     // ── Employee Data ──────────────────────────────────────────
+    // ── Employee Data (used for Employee role users) ────────────
     private function employeeData($user, string $today, string $month): \Illuminate\Http\JsonResponse
+    {
+        $payload = $this->buildEmployeePayload($user, $today, $month);
+
+        if (isset($payload['no_employee'])) {
+            return response()->json(['role' => 'employee', 'no_employee' => true]);
+        }
+
+        return response()->json(array_merge(['role' => 'employee'], $payload));
+    }
+
+    // ── Shared builder: personal attendance/leave data for any user with an employee_id ──
+    private function buildEmployeePayload($user, string $today, string $month): array
     {
         $emp = $user->employee()->with(['department', 'position'])->first();
         if (!$emp) {
-            return response()->json(['role' => 'employee', 'no_employee' => true]);
+            return ['no_employee' => true];
         }
 
         $empId = $emp->employee_id;
 
-        // Today's attendance
         $todayAtt = Attendance::where('employee_id', $empId)
                         ->where('attendance_date', $today)->first();
 
-        // This month summary
         $monthlyStats = Attendance::where('employee_id', $empId)
                         ->whereRaw("DATE_FORMAT(attendance_date, '%Y-%m') = ?", [$month])
                         ->selectRaw("
@@ -163,7 +195,6 @@ class DashboardController extends Controller
                             ROUND(SUM(working_hours), 1) as total_hours
                         ")->first();
 
-        // Leave balance
         $leaveBalance = LeaveRequest::where('employee_id', $empId)
                         ->where('status', 'Approved')
                         ->whereYear('start_date', Carbon::now()->year)
@@ -176,7 +207,6 @@ class DashboardController extends Controller
                             'used' => $group->sum('total_days'),
                         ])->values();
 
-        // Recent attendance (last 7)
         $recent = Attendance::where('employee_id', $empId)
                     ->orderByDesc('attendance_date')
                     ->take(7)->get()
@@ -189,21 +219,23 @@ class DashboardController extends Controller
                         'late_minutes'  => $a->late_minutes,
                     ]);
 
-        // Current shift
         $shift = EmployeeShift::with('shift')
                     ->where('employee_id', $empId)
                     ->where('effective_from', '<=', $today)
                     ->where(fn($q) => $q->whereNull('effective_to')->orWhere('effective_to', '>=', $today))
                     ->latest('effective_from')->first()?->shift;
 
-        return response()->json([
-            'role'     => 'employee',
-            'today'    => $today,
+        return [
             'employee' => [
                 'name'       => $emp->first_name . ' ' . $emp->last_name,
                 'position'   => $emp->position?->position_name ?? '—',
                 'department' => $emp->department?->department_name ?? '—',
-                'photo'      => $emp->photo ? asset('storage/' . $emp->photo) : null,
+                'photo' => (
+                    $emp->photo &&
+                    file_exists(storage_path('app/public/' . $emp->photo))
+                )
+                    ? asset('storage/' . $emp->photo)
+                    : null,
                 'initials'   => strtoupper(substr($emp->first_name,0,1) . substr($emp->last_name,0,1)),
             ],
             'today_attendance' => $todayAtt,
@@ -211,6 +243,6 @@ class DashboardController extends Controller
             'leave_balance'    => $leaveBalance,
             'recent'           => $recent,
             'shift'            => $shift,
-        ]);
+        ];
     }
 }

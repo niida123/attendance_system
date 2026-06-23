@@ -29,11 +29,14 @@
     {{-- ============================ ADMIN VIEW ============================ --}}
     <div id="admin-view" class="d-none">
 
-        <div class="d-flex justify-content-end mb-3">
-            <button id="btnPrintDashboard" class="btn btn-sm" style="height:36px;border-radius:10px;border:1.5px solid #e5e7eb;background:#fff;color:#6b7280;font-weight:600;font-size:.8rem;padding:0 14px;">
-                <i class="fas fa-print mr-1"></i> Print
-            </button>
-        </div>
+    <div class="d-flex justify-content-end mb-3" style="gap:10px;">
+        <button id="btnMyDashboard" class="btn btn-sm d-none" style="height:36px;border-radius:10px;border:1.5px solid #4f46e5;background:#eef2ff;color:#4f46e5;font-weight:600;font-size:.8rem;padding:0 14px;">
+            <i class="fas fa-user mr-1"></i> My Dashboard
+        </button>
+        <button id="btnPrintDashboard" class="btn btn-sm" style="height:36px;border-radius:10px;border:1.5px solid #e5e7eb;background:#fff;color:#6b7280;font-weight:600;font-size:.8rem;padding:0 14px;">
+            <i class="fas fa-print mr-1"></i> Print
+        </button>
+    </div>
 
         <div id="holiday-banner" class="d-none d-flex align-items-center mb-3" style="background:#eef2ff;border:1px solid #e0e7ff;border-radius:12px;padding:12px 18px;">
             <i class="fas fa-umbrella-beach mr-2" style="color:#4f46e5;"></i>
@@ -150,6 +153,11 @@
 
     {{-- ========================== EMPLOYEE VIEW =========================== --}}
     <div id="employee-view" class="d-none">
+        <div class="d-flex justify-content-end mb-3">
+            <button id="btnBackToAdmin" class="btn btn-sm d-none" style="height:36px;border-radius:10px;border:1.5px solid #e5e7eb;background:#fff;color:#6b7280;font-weight:600;font-size:.8rem;padding:0 14px;">
+                <i class="fas fa-arrow-left mr-1"></i> Back to Admin View
+            </button>
+        </div>
 
         <div class="panel-card mb-4">
             <div class="panel-body d-flex align-items-center flex-wrap" style="gap:16px;">
@@ -336,9 +344,8 @@
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-document.addEventListener('turbo:load', function () {
-    loadDashboard();
-});
+document.addEventListener('DOMContentLoaded', loadDashboard);
+document.addEventListener('turbo:load', loadDashboard);
 
 function loadDashboard() {
 
@@ -453,6 +460,21 @@ function loadDashboard() {
                     </div>
                 </li>`;
         });
+            if (data.has_personal_view && data.personal) {
+            const btn = document.getElementById('btnMyDashboard');
+            btn.classList.remove('d-none');
+            btn.addEventListener('click', () => {
+                document.getElementById('admin-view').classList.add('d-none');
+                document.getElementById('employee-view').classList.remove('d-none');
+                document.getElementById('btnBackToAdmin').classList.remove('d-none');
+                renderEmployee({ role: 'employee', no_employee: false, ...data.personal });
+            });
+
+            document.getElementById('btnBackToAdmin')?.addEventListener('click', () => {
+                document.getElementById('employee-view').classList.add('d-none');
+                document.getElementById('admin-view').classList.remove('d-none');
+            });
+        }
     }
 
     function renderEmployee(data) {

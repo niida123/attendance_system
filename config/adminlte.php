@@ -365,7 +365,7 @@ return [
         'text' => 'My Attendance',
         'url'  => 'my-attendance',
         'icon' => 'fas fa-calendar-check',
-        'can'     => 'attendance.view',
+        'can'     => 'attendance.my',
         ],
 
         [
