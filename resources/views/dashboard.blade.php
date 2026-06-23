@@ -344,6 +344,109 @@
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
+
+    function printDashboard(data) {
+        const isAdmin = data.role === 'admin';
+        const today = data.today ?? new Date().toLocaleDateString();
+
+        let html = `
+            <html>
+            <head>
+                <title>Dashboard Report - ${today}</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 24px; color: #1a1f36; }
+                    h1 { font-size: 20px; margin-bottom: 4px; }
+                    h2 { font-size: 15px; margin-top: 24px; border-bottom: 1px solid #ddd; padding-bottom: 6px; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+                    th, td { border: 1px solid #ddd; padding: 6px 10px; font-size: 13px; text-align: left; }
+                    th { background: #f3f4f6; }
+                    .meta { color: #6b7280; font-size: 13px; margin-bottom: 16px; }
+                </style>
+            </head>
+            <body>
+                <h1>Attendance Dashboard Report</h1>
+                <div class="meta">Generated: ${today}</div>
+        `;
+
+        if (isAdmin) {
+            const s = data.stats;
+            html += `
+                <h2>Summary</h2>
+                <table>
+                    <tr><th>Total Employees</th><td>${s.total_employees}</td></tr>
+                    <tr><th>Present Today</th><td>${s.present_today}</td></tr>
+                    <tr><th>Late Today</th><td>${s.late_today}</td></tr>
+                    <tr><th>Absent Today</th><td>${s.absent_today}</td></tr>
+                    <tr><th>On Leave Today</th><td>${s.on_leave_today}</td></tr>
+                    <tr><th>Pending Leave Requests</th><td>${s.pending_leaves}</td></tr>
+                </table>
+
+                <h2>Absent Today</h2>
+                <table>
+                    <tr><th>Name</th><th>Position</th><th>Department</th></tr>
+                    ${data.absent_list.map(e => `
+                        <tr><td>${e.name}</td><td>${e.position}</td><td>${e.department}</td></tr>
+                    `).join('') || '<tr><td colspan="3">No one is absent today</td></tr>'}
+                </table>
+
+                <h2>Pending Leave Requests</h2>
+                <table>
+                    <tr><th>Name</th><th>Leave Type</th><th>Start</th><th>End</th><th>Days</th></tr>
+                    ${data.pending_list.map(r => `
+                        <tr><td>${r.name}</td><td>${r.leave_type}</td><td>${r.start_date}</td><td>${r.end_date}</td><td>${r.total_days}</td></tr>
+                    `).join('') || '<tr><td colspan="5">No pending leave requests</td></tr>'}
+                </table>
+            `;
+        } else {
+            const emp = data.employee;
+            const att = data.today_attendance;
+            const m = data.monthly_stats;
+
+            html += `
+                <h2>Employee</h2>
+                <table>
+                    <tr><th>Name</th><td>${emp?.name ?? '—'}</td></tr>
+                    <tr><th>Position</th><td>${emp?.position ?? '—'}</td></tr>
+                    <tr><th>Department</th><td>${emp?.department ?? '—'}</td></tr>
+                </table>
+
+                <h2>Today</h2>
+                <table>
+                    <tr><th>Check In</th><td>${att?.check_in ?? '—'}</td></tr>
+                    <tr><th>Check Out</th><td>${att?.check_out ?? '—'}</td></tr>
+                    <tr><th>Working Hours</th><td>${att?.working_hours ?? '—'}</td></tr>
+                    <tr><th>Status</th><td>${att?.status ?? 'Not checked in'}</td></tr>
+                </table>
+
+                <h2>This Month</h2>
+                <table>
+                    <tr><th>Present</th><td>${m?.present ?? 0}</td></tr>
+                    <tr><th>Late</th><td>${m?.late ?? 0}</td></tr>
+                    <tr><th>Absent</th><td>${m?.absent ?? 0}</td></tr>
+                    <tr><th>On Leave</th><td>${m?.on_leave ?? 0}</td></tr>
+                    <tr><th>Total Hours</th><td>${m?.total_hours ?? 0}</td></tr>
+                </table>
+
+                <h2>Recent Attendance</h2>
+                <table>
+                    <tr><th>Date</th><th>In</th><th>Out</th><th>Status</th></tr>
+                    ${(data.recent || []).map(r => `
+                        <tr><td>${r.date}</td><td>${r.check_in ?? '—'}</td><td>${r.check_out ?? '—'}</td><td>${r.status}</td></tr>
+                    `).join('') || '<tr><td colspan="4">No records</td></tr>'}
+                </table>
+            `;
+        }
+
+        html += `</body></html>`;
+
+        const win = window.open('', '_blank');
+        win.document.write(html);
+        win.document.close();
+        win.onload = () => {
+            win.focus();
+            win.print();
+        };
+    }
 document.addEventListener('DOMContentLoaded', loadDashboard);
 document.addEventListener('turbo:load', loadDashboard);
 
