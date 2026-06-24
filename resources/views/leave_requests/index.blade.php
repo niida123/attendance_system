@@ -34,7 +34,7 @@
                         <small style="color:#9ca3af;font-size:.75rem;">Manage and approve employee leave</small>
                     </div>
                 </div>
-                <button type="button" id="btnExport"
+                <button type="button" id="btnExport" class="btn btn-sm ml-auto"
                     style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-weight:600;font-size:.82rem;box-shadow:0 4px 14px rgba(16,185,129,.3);">
                     <i class="fas fa-file-excel mr-1"></i> Export CSV
                 </button>

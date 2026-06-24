@@ -42,18 +42,12 @@
                         </div>
                     </div>
 
-                    {{-- Right Side --}}
-                    <div class="d-flex align-items-center ml-auto mt-3" style="gap:10px;flex-wrap:wrap;">
-
-                        {{-- Search --}}
-                        <div style="position:relative;width:250px;min-width:180px;">
-                            <input type="text" class="form-control form-control-sm" placeholder="Search employee..."
-                                id="searchAttendance" style="padding-right:35px;">
-                            <i class="fas fa-times" id="clearSearch"
-                                style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:#6b7280;"></i>
-                        </div>
-
-
+                    {{-- Print --}}
+                    <div class="filter-box filter-print-box ml-auto">
+                        <button id="btnPrint" class="btn btn-sm btn-block"
+                            style="height:40px;border-radius:12px;border:none;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-weight:600;box-shadow:0 4px 12px rgba(79,70,229,.3);">
+                            <i class="fas fa-print mr-1"></i> Print
+                        </button>
                     </div>
                 </div>
 
@@ -115,6 +109,77 @@
                                         style="font-size:1.4rem;color:#1a1f36;line-height:1;">—</div>
                                     <div style="font-size:.75rem;color:#9ca3af;margin-top:2px;">Absent</div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ── Filter Strip ── --}}
+                    <div style="background:#f8f9ff;border-bottom:1px solid #eef0f8;padding:14px 24px;">
+                        <div class="d-flex align-items-center flex-wrap" style="gap:10px;">
+
+                            {{-- Search --}}
+                            <div class="filter-box filter-search-box">
+                                <div style="position:relative;">
+                                    <i class="fas fa-search"
+                                        style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#9ca3af;"></i>
+                                    <input type="text" id="searchAttendance" class="form-control form-control-sm"
+                                        placeholder="Search employee..."
+                                        style="padding-left:34px;height:40px;border-radius:12px;">
+                                    <i class="fas fa-times" id="clearSearch"
+                                        style="display:none;position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#6b7280;"></i>
+                                </div>
+                            </div>
+
+                            {{-- Employee --}}
+                            <div class="filter-box filter-employee-box">
+                                <select id="filterEmployee" class="form-control form-control-sm"
+                                    style="height:40px;border-radius:12px;">
+                                    <option value="">All Employees</option>
+                                </select>
+                            </div>
+
+                            {{-- Department --}}
+                            <div class="filter-box filter-department-box">
+                                <select id="filterDepartment" class="form-control form-control-sm"
+                                    style="height:40px;border-radius:12px;">
+                                    <option value="">All Departments</option>
+                                </select>
+                            </div>
+
+                            {{-- Status --}}
+                            <div class="filter-box filter-status-box">
+                                <select id="filterStatus" class="form-control form-control-sm"
+                                    style="height:40px;border-radius:12px;">
+                                    <option value="">All Status</option>
+                                    <option value="Present">Present</option>
+                                    <option value="Late">Late</option>
+                                    <option value="Absent">Absent</option>
+                                    <option value="Half Day">Half Day</option>
+                                    <option value="holiday">Holiday</option>
+                                </select>
+                            </div>
+
+                            {{-- Date Range --}}
+                            <div class="filter-box filter-date-box">
+                                <div class="filter-date-range">
+                                    <div class="filter-date-field">
+                                        <input type="date" id="filterDateFrom" class="form-control form-control-sm"
+                                            style="height:40px;border-radius:12px;">
+                                    </div>
+                                    <div class="filter-date-separator">to</div>
+                                    <div class="filter-date-field">
+                                        <input type="date" id="filterDateTo" class="form-control form-control-sm"
+                                            style="height:40px;border-radius:12px;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Reset --}}
+                            <div class="filter-box filter-reset-box">
+                                <button id="btnResetFilters" class="btn btn-sm btn-block"
+                                    style="height:40px;border-radius:12px;border:1.5px solid #e5e7eb;background:#fff;color:#6b7280;font-weight:600;">
+                                    <i class="fas fa-undo mr-1"></i> Reset
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -231,6 +296,137 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
+        /* ── Filter strip ── */
+        .filter-box {
+            flex-shrink: 0;
+        }
+
+        .filter-search-box {
+            min-width: 220px;
+        }
+
+        .filter-employee-box {
+            min-width: 170px;
+        }
+
+        .filter-department-box {
+            min-width: 160px;
+        }
+
+        .filter-status-box {
+            min-width: 140px;
+        }
+
+        .filter-reset-box {
+            min-width: 90px;
+        }
+
+        .filter-print-box {
+            min-width: 90px;
+        }
+
+        .filter-date-box {
+            flex-shrink: 0;
+        }
+
+        .filter-date-range {
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-date-field {
+            flex: 1;
+            min-width: 130px;
+        }
+
+        .filter-date-separator {
+            margin: 0 8px;
+            color: #9ca3af;
+            font-size: .82rem;
+            white-space: nowrap;
+        }
+
+        .filter-box .form-control {
+            border: 1.5px solid #e5e7eb !important;
+            font-size: .82rem !important;
+            color: #374151 !important;
+        }
+
+        .filter-box .form-control:focus {
+            border-color: #4f46e5 !important;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, .12) !important;
+        }
+
+        @media (max-width: 768px) {
+
+            .filter-search-box,
+            .filter-employee-box,
+            .filter-department-box,
+            .filter-status-box,
+            .filter-date-box,
+            .filter-reset-box,
+            .filter-print-box {
+                min-width: 100%;
+            }
+
+            .filter-date-range {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+        }
+
+        @media print {
+
+            /* Hide everything except the table */
+            .main-header,
+            .main-sidebar,
+            .main-footer,
+            .content-header,
+            .card-header,
+            .filter-box,
+            .btn-delete-row,
+            .dataTables_paginate,
+            .dataTables_info,
+            #statsRow {
+                display: none !important;
+            }
+
+            body,
+            .content-wrapper {
+                background: #fff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .card {
+                box-shadow: none !important;
+                border: none !important;
+                border-radius: 0 !important;
+            }
+
+            .card-body {
+                padding: 0 !important;
+                background: #fff !important;
+            }
+
+            #attendanceTable {
+                min-width: 100% !important;
+                font-size: 11px !important;
+            }
+
+            #attendanceTable thead tr {
+                background: #f3f4f6 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            #attendanceTable th,
+            #attendanceTable td {
+                padding: 8px 10px !important;
+                border: 1px solid #e5e7eb !important;
+            }
+        }
+
         /* ── Stats Row: 2x2 on all screens below desktop ── */
         @media (max-width: 992px) {
             #statsRow .col-md-3 {
@@ -389,16 +585,6 @@
             box-shadow: 0 0 0 3px rgba(79, 70, 229, .12) !important;
         }
 
-        #btnCheckIn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(5, 150, 105, .4) !important;
-        }
-
-        #btnCheckOut:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(245, 158, 11, .4) !important;
-        }
-
         #toast-container>.toast {
             border-radius: 12px !important;
             box-shadow: 0 8px 30px rgba(0, 0, 0, .12) !important;
@@ -442,7 +628,10 @@
             const CSRF = '{{ csrf_token() }}';
             let deleteId = null;
 
-            /// Helper to format time in 12-hour format with AM/PM
+            // Full dataset cache for client-side filtering
+            let allData = [];
+
+            /* ── Time formatter ──────────────────────────────── */
             function formatTime(t) {
                 if (!t) return '<span style="color:#d1d5db;">—</span>';
                 const [h, m] = t.split(':');
@@ -465,6 +654,96 @@
                 return `<span class="${cls}"><i class="fas ${icon}" style="font-size:.5rem;"></i>${label}</span>`;
             }
 
+            /* ── Update stats from currently visible (filtered) rows ── */
+            function updateStats(data) {
+                $('#statTotal').text(data.length);
+                $('#statPresent').text(data.filter(r => r.status === 'Present').length);
+                $('#statLate').text(data.filter(r => r.status === 'Late').length);
+                $('#statAbsent').text(data.filter(r => r.status === 'Absent').length);
+            }
+
+            /* ── Populate Employee dropdown from data ── */
+            function populateEmployeeDropdown(data) {
+                const seen = {};
+                const opts = [{
+                    id: '',
+                    name: 'All Employees'
+                }];
+                data.forEach(r => {
+                    if (r.employee) {
+                        const id = r.employee.employee_id ?? (r.employee.first_name + r.employee.last_name);
+                        const name = (r.employee.first_name ?? '') + ' ' + (r.employee.last_name ?? '');
+                        if (!seen[id]) {
+                            seen[id] = true;
+                            opts.push({
+                                id,
+                                name: name.trim()
+                            });
+                        }
+                    }
+                });
+                opts.sort((a, b) => a.name.localeCompare(b.name));
+                const $sel = $('#filterEmployee').empty();
+                opts.forEach(o => $sel.append(`<option value="${o.id}">${o.name}</option>`));
+            }
+
+            /* ── Populate Department dropdown from data ── */
+            function populateDepartmentDropdown(data) {
+                const seen = new Set();
+                const opts = ['All Departments'];
+                data.forEach(r => {
+                    const dept = r.employee?.department ?? r.department ?? null;
+                    if (dept && !seen.has(dept)) {
+                        seen.add(dept);
+                        opts.push(dept);
+                    }
+                });
+                opts.sort((a, b) => a === 'All Departments' ? -1 : a.localeCompare(b));
+                const $sel = $('#filterDepartment').empty();
+                opts.forEach((d, i) => $sel.append(`<option value="${i === 0 ? '' : d}">${d}</option>`));
+            }
+
+            /* ── Apply all active filters ── */
+            function applyFilters() {
+                const empVal = $('#filterEmployee').val().trim().toLowerCase();
+                const deptVal = $('#filterDepartment').val().trim().toLowerCase();
+                const statVal = $('#filterStatus').val().trim();
+                const dateFrom = $('#filterDateFrom').val(); // YYYY-MM-DD or ''
+                const dateTo = $('#filterDateTo').val();
+
+                const filtered = allData.filter(r => {
+                    // Employee
+                    if (empVal) {
+                        const fullName = ((r.employee?.first_name ?? '') + ' ' + (r.employee?.last_name ??
+                            '')).trim().toLowerCase();
+                        const empId = String(r.employee?.employee_id ?? '').toLowerCase();
+                        if (!fullName.includes(empVal) && !empId.includes(empVal)) return false;
+                    }
+
+                    // Department
+                    if (deptVal) {
+                        const dept = (r.employee?.department ?? r.department ?? '').toLowerCase();
+                        if (dept !== deptVal) return false;
+                    }
+
+                    // Status
+                    if (statVal && r.status !== statVal) return false;
+
+                    // Date range
+                    if (r.attendance_date) {
+                        const d = r.attendance_date.substring(0, 10); // YYYY-MM-DD
+                        if (dateFrom && d < dateFrom) return false;
+                        if (dateTo && d > dateTo) return false;
+                    }
+
+                    return true;
+                });
+
+                // Reload DataTable with filtered data
+                table.clear().rows.add(filtered).draw();
+                updateStats(filtered);
+            }
+
             /* ── DataTable ────────────────────────────────────── */
             const table = $('#attendanceTable').DataTable({
                 processing: true,
@@ -474,13 +753,14 @@
                     url: DATA_URL,
                     type: 'GET',
                     dataSrc: function(json) {
-                        const data = json.data || [];
-                        $('#statTotal').text(data.length);
-                        $('#statPresent').text(data.filter(r => r.status === 'Present').length);
-                        $('#statLate').text(data.filter(r => r.status === 'Late').length);
-                        $('#statAbsent').text(data.filter(r => r.status === 'Absent').length);
-                        $('#statHoliday').text(data.filter(r => r.status === 'holiday').length);
-                        return data;
+                        allData = json.data || [];
+
+                        // Populate filter dropdowns once on first load
+                        populateEmployeeDropdown(allData);
+                        populateDepartmentDropdown(allData);
+
+                        updateStats(allData);
+                        return allData;
                     },
                     error: function() {
                         toastr.error('Failed to load attendance records.');
@@ -507,48 +787,21 @@
                     {
                         data: 'employee',
                         render: emp => emp ?
-                            `
-            <span style="
-                background:#eef2ff;
-                color:#4338ca;
-                padding:6px 14px;
-                border-radius:20px;
-                font-size:13px;
-                font-weight:600;
-            ">
-                ${emp.first_name ?? ''} ${emp.last_name ?? ''}
-            </span>
-        ` :
-                            `
-            <span style="
-                background:#f3f4f6;
-                color:#9ca3af;
-                padding:6px 14px;
-                border-radius:20px;
-                font-size:13px;
-            ">
-                —
-            </span>
-        `
+                            `<span style="background:#eef2ff;color:#4338ca;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;">${emp.first_name ?? ''} ${emp.last_name ?? ''}</span>` :
+                            `<span style="background:#f3f4f6;color:#9ca3af;padding:6px 14px;border-radius:20px;font-size:13px;">—</span>`
                     },
                     {
                         data: 'attendance_date',
                         render: d => d ?
-                            `<span>${
-                                new Date(d).toLocaleDateString('en-CA', {
-                                    timeZone: 'Asia/Phnom_Penh'
-                                })
-                                }</span>` : '<span style="color:#d1d5db;">—</span>'
+                            `<span>${new Date(d).toLocaleDateString('en-CA', { timeZone: 'Asia/Phnom_Penh' })}</span>` :
+                            '<span style="color:#d1d5db;">—</span>'
                     },
-                    // Check In
                     {
                         data: 'check_in',
                         render: t => t ?
                             `<span style="color:#059669;font-weight:600;">${formatTime(t)}</span>` :
                             '<span style="color:#d1d5db;">—</span>'
                     },
-
-                    // Check Out
                     {
                         data: 'check_out',
                         render: t => t ?
@@ -557,8 +810,8 @@
                     },
                     {
                         data: 'working_hours',
-                        render: h => h != null ?
-                            `<span>${h} hr</span>` : '<span style="color:#d1d5db;">—</span>'
+                        render: h => h != null ? `<span>${h} hr</span>` :
+                            '<span style="color:#d1d5db;">—</span>'
                     },
                     {
                         data: 'late_minutes',
@@ -590,10 +843,33 @@
                                         data-toggle="tooltip" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
-                            </div>
-                        `
+                            </div>`
                     }
                 ]
+            });
+
+            /* ── Filter event listeners ───────────────────────── */
+            $('#filterEmployee, #filterDepartment, #filterStatus, #filterDateFrom, #filterDateTo')
+                .on('change keyup', function() {
+                    applyFilters();
+                });
+
+            /* ── Print ────────────────────────────────────────── */
+            $('#btnPrint').on('click', function() {
+                window.print();
+            });
+
+            /* ── Reset filters ────────────────────────────────── */
+            $('#btnResetFilters').on('click', function() {
+                $('#filterEmployee').val('');
+                $('#filterDepartment').val('');
+                $('#filterStatus').val('');
+                $('#filterDateFrom').val('');
+                $('#filterDateTo').val('');
+                $('#searchAttendance').val('');
+                $('#clearSearch').hide();
+                table.search('').clear().rows.add(allData).draw();
+                updateStats(allData);
             });
 
             /* ── Custom Search ────────────────────────────────── */
@@ -622,7 +898,6 @@
                 const $btn = $(this);
                 $btn.prop('disabled', true).html(
                     '<i class="fas fa-spinner fa-spin mr-1"></i> Checking In...');
-
                 $.ajax({
                         url: CHECKIN_URL,
                         method: 'POST',
@@ -630,19 +905,11 @@
                             _token: CSRF
                         }
                     })
-                    .done(function(res) {
-                        if (res.success) {
-                            toastr.success(res.message);
-                            table.ajax.reload(null, false);
-                        } else {
-                            toastr.warning(res.message);
-                        }
-                    })
-                    .fail(function(xhr) {
-                        const msg = xhr.responseJSON?.message ?? 'Check-in failed. Please try again.';
-                        toastr.error(msg);
-                    })
-                    .always(function() {
+                    .done(res => res.success ? toastr.success(res.message) : toastr.warning(res.message))
+                    .fail(xhr => toastr.error(xhr.responseJSON?.message ??
+                        'Check-in failed. Please try again.'))
+                    .always(() => {
+                        table.ajax.reload(null, false);
                         $btn.prop('disabled', false).html(
                             '<i class="fas fa-sign-in-alt mr-1"></i> Check In');
                     });
@@ -653,7 +920,6 @@
                 const $btn = $(this);
                 $btn.prop('disabled', true).html(
                     '<i class="fas fa-spinner fa-spin mr-1"></i> Checking Out...');
-
                 $.ajax({
                         url: CHECKOUT_URL,
                         method: 'POST',
@@ -661,19 +927,11 @@
                             _token: CSRF
                         }
                     })
-                    .done(function(res) {
-                        if (res.success) {
-                            toastr.success(res.message);
-                            table.ajax.reload(null, false);
-                        } else {
-                            toastr.warning(res.message);
-                        }
-                    })
-                    .fail(function(xhr) {
-                        const msg = xhr.responseJSON?.message ?? 'Check-out failed. Please try again.';
-                        toastr.error(msg);
-                    })
-                    .always(function() {
+                    .done(res => res.success ? toastr.success(res.message) : toastr.warning(res.message))
+                    .fail(xhr => toastr.error(xhr.responseJSON?.message ??
+                        'Check-out failed. Please try again.'))
+                    .always(() => {
+                        table.ajax.reload(null, false);
                         $btn.prop('disabled', false).html(
                             '<i class="fas fa-sign-out-alt mr-1"></i> Check Out');
                     });
@@ -688,10 +946,8 @@
 
             $(document).on('click', '#btnConfirmDelete', function() {
                 if (!deleteId) return;
-
                 const $btn = $(this);
                 $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Deleting...');
-
                 $.ajax({
                         url: BASE_URL + '/' + deleteId,
                         method: 'POST',
@@ -700,20 +956,18 @@
                             _method: 'DELETE'
                         }
                     })
-                    .done(function(res) {
+                    .done(res => {
                         $('#deleteModal').modal('hide');
                         if (res.success) {
                             table.ajax.reload(null, false);
                             toastr.success(res.message);
-                        } else {
-                            toastr.error(res.message);
-                        }
+                        } else toastr.error(res.message);
                     })
-                    .fail(function() {
+                    .fail(() => {
                         $('#deleteModal').modal('hide');
                         toastr.error('Something went wrong. Please try again.');
                     })
-                    .always(function() {
+                    .always(() => {
                         deleteId = null;
                         $btn.prop('disabled', false).html('<i class="fas fa-trash mr-1"></i> Delete');
                     });
