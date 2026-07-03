@@ -265,6 +265,13 @@
                     </span>`;
         }
 
+        function verifiedBadge(v) {
+            if (v === null || v === undefined) return '';
+            return v
+                ? `<span style="background:#ecfdf5;color:#059669;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><i class="fas fa-map-marker-alt" style="font-size:.55rem;"></i>Verified</span>`
+                : `<span style="background:#fef2f2;color:#ef4444;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><i class="fas fa-map-marker-alt" style="font-size:.55rem;"></i>Out of Range</span>`;
+        }
+
         function formatTime(t) {
             if (!t) return '—';
             const [h, m] = t.split(':');
@@ -434,6 +441,7 @@
                     res.data.forEach(function (r) {
                         const displayDate = new Date(r.attendance_date).toISOString().split('T')[0];
                         const statusBadgeHtml = statusBadge(r.status);
+                        const verifBadgeHtml = verifiedBadge(r.is_verified);
                         html += `
                             <div class="log-item">
                                 <div style="width:42px;height:42px;border-radius:10px;background:#f8f9ff;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;">
@@ -444,6 +452,7 @@
                                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                                         <span style="font-weight:600;color:#1a1f36;font-size:.88rem;">${r.attendance_date}</span>
                                         ${statusBadgeHtml}
+                                        ${verifBadgeHtml}
                                     </div>
                                     <div style="font-size:.76rem;color:#9ca3af;margin-top:3px;display:flex;gap:14px;flex-wrap:wrap;">
                                         <span><i class="fas fa-sign-in-alt mr-1" style="color:#059669;"></i>${r.check_in ?? '—'}</span>
@@ -486,21 +495,26 @@
             $('#empInitials').show();
         });
 
-            /* ── GPS helper ─────────────────────────────────────── */
+           /* ── GPS helper ─────────────────────────────────────── */
             let currentGPS = null;
+            let currentLat = null;
+            let currentLng = null;
             let gpsReady = false;
 
             function getGPS() { return currentGPS; }
 
-            // Request GPS immediately on page load
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition(
                     pos => {
-                        currentGPS = pos.coords.latitude + ',' + pos.coords.longitude;
+                        currentLat = pos.coords.latitude;
+                        currentLng = pos.coords.longitude;
+                        currentGPS = currentLat + ',' + currentLng;
                         gpsReady = true;
                     },
                     () => {
                         currentGPS = null;
+                        currentLat = null;
+                        currentLng = null;
                         gpsReady = true;
                     },
                     { enableHighAccuracy: true, timeout: 10000 }
@@ -522,7 +536,16 @@
                     clearInterval(interval);
                     $btn.html('<i class="fas fa-spinner fa-spin mr-2"></i> Checking In...');
 
-                    $.ajax({ url: CHECKIN_URL, method: 'POST', data: { _token: CSRF, gps_location: getGPS() } })
+                    $.ajax({
+                        url: CHECKIN_URL,
+                        method: 'POST',
+                        data: {
+                            _token: CSRF,
+                            gps_location: getGPS(),
+                            latitude: currentLat,
+                            longitude: currentLng
+                        }
+                    })
                         .done(function (res) {
                             if (res.success) {
                                 toastr.success(res.message);
@@ -553,7 +576,16 @@
                     clearInterval(interval);
                     $btn.html('<i class="fas fa-spinner fa-spin mr-2"></i> Checking Out...');
 
-                    $.ajax({ url: CHECKOUT_URL, method: 'POST', data: { _token: CSRF, gps_location: getGPS() } })
+                    $.ajax({
+                        url: CHECKOUT_URL,
+                        method: 'POST',
+                        data: {
+                            _token: CSRF,
+                            gps_location: getGPS(),
+                            latitude: currentLat,
+                            longitude: currentLng
+                        }
+                    })
                         .done(function (res) {
                             if (res.success) {
                                 toastr.success(res.message);

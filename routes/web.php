@@ -16,6 +16,8 @@ use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmployeeShiftController;
 use App\Http\Controllers\LeaveRequestController;
+use App\Http\Controllers\OfficeController;
+use App\Http\Controllers\AttendanceReportController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -29,17 +31,27 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard/data', [DashboardController::class, 'getData'])->name('dashboard.data');
 
     });
+    // Offices — everyone with office.view (HR + Employee both have this)
+    Route::middleware('permission:office.view')->group(function () {
+        Route::get('offices', [OfficeController::class, 'page'])->name('offices.index');
+        Route::get('offices-data', [OfficeController::class, 'data'])->name('offices.data');
+    
+        Route::post('offices', [OfficeController::class, 'store'])->name('offices.store');
+        Route::put('offices/{office}', [OfficeController::class, 'update'])->name('offices.update');
+        Route::delete('offices/{office}', [OfficeController::class, 'destroy'])->name('offices.destroy');
+        Route::patch('offices/{office}/toggle-status', [OfficeController::class, 'toggleStatus'])->name('offices.toggle-status');
+    });
 
     // Employees
     Route::middleware('permission:employee.view')->group(function () {
-        Route::get('employees/data', [EmployeeController::class, 'getData']);
+        Route::get('employees/data', [EmployeeController::class, 'getData'])->name('employees.data');
         Route::get('positions/by-department/{department_id}', [PositionController::class, 'byDepartment'])->name('positions.byDepartment');
         Route::resource('employees', EmployeeController::class);
     });
 
     // Departments
     Route::middleware('permission:department.view')->group(function () {
-        Route::get('departments/data', [DepartmentController::class, 'getData']);
+        Route::get('departments/data', [DepartmentController::class, 'getData'])->name('departments.data');
         Route::resource('departments', DepartmentController::class);
     });
 
@@ -143,6 +155,27 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('permission:user.view')->group(function () {
         Route::get('users/data', [UserController::class, 'getData'])->name('users.data');
         Route::resource('users', UserController::class);
+    });
+
+    Route::middleware('permission:attendance.view')->prefix('reports/attendance')->name('reports.')->group(function () {
+
+        // Daily
+        Route::get('daily', [AttendanceReportController::class, 'dailyPage'])->name('daily');
+        Route::get('daily/data', [AttendanceReportController::class, 'dailyData'])->name('daily.data');
+        Route::get('daily/export/pdf', [AttendanceReportController::class, 'exportDailyPdf'])->name('daily.export.pdf');
+        Route::get('daily/export/excel', [AttendanceReportController::class, 'exportDailyExcel'])->name('daily.export.excel');
+
+        // Monthly
+        Route::get('monthly', [AttendanceReportController::class, 'monthlyPage'])->name('monthly');
+        Route::get('monthly/data', [AttendanceReportController::class, 'monthlyData'])->name('monthly.data');
+        Route::get('monthly/export/pdf', [AttendanceReportController::class, 'exportMonthlyPdf'])->name('monthly.export.pdf');
+        Route::get('monthly/export/excel', [AttendanceReportController::class, 'exportMonthlyExcel'])->name('monthly.export.excel');
+
+        // Quarterly
+        Route::get('quarterly', [AttendanceReportController::class, 'quarterlyPage'])->name('quarterly');
+        Route::get('quarterly/data', [AttendanceReportController::class, 'quarterlyData'])->name('quarterly.data');
+        Route::get('quarterly/export/pdf', [AttendanceReportController::class, 'exportQuarterlyPdf'])->name('quarterly.export.pdf');
+        Route::get('quarterly/export/excel', [AttendanceReportController::class, 'exportQuarterlyExcel'])->name('quarterly.export.excel');
     });
 
     // Profile — every authenticated role has profile.view

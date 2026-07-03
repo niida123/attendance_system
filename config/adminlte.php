@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<i class="fas fa-clock mr-2" style="color: #5a0b8f;"></i><b style="color: #5a0b8f;">ATTENDANCE</b> <span style="color: #5a0b8f;">SYSTEM</span> ',
+    'logo' => '<i class="fas fa-clock mr-2" style="color:#ffffff;"></i><b style="color:#ffffff;letter-spacing:.4px;">ATTENDANCE</b> <span style="color:#c7d2fe;letter-spacing:.4px;">SYSTEM</span>',
     'logo_img' => null,
     'logo_img_class' => null,
     'logo_img_xl' => null,
@@ -84,7 +84,7 @@ return [
     */
 
     'auth_logo' => [
-        'enabled' => false,
+        'enabled' => true,
         'img' => [
             'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
             'alt' => 'Auth Logo',
@@ -191,12 +191,12 @@ return [
     */
 
     'classes_body' => '',
-    'classes_brand' => 'light-purple',
+    'classes_brand' => '',
     'classes_brand_text' => '',
     'classes_content_wrapper' => '',
     'classes_content_header' => '',
     'classes_content' => '',
-    'classes_sidebar' => 'sidebar-light-purple elevation-4',
+    'classes_sidebar' => 'sidebar-dark-primary elevation-4',
     'classes_sidebar_nav' => '',
     'classes_topnav' => 'navbar-white navbar-light',
     'classes_topnav_nav' => 'navbar-expand',
@@ -216,12 +216,12 @@ return [
 
     'sidebar_mini' => 'lg',
     'sidebar_collapse' => false,
+    'sidebar_collapse_remember' => true,
     'sidebar_collapse_auto_size' => false,
-    'sidebar_collapse_remember' => false,
     'sidebar_collapse_remember_no_transition' => true,
     'sidebar_scrollbar_theme' => 'os-theme-light',
     'sidebar_scrollbar_auto_hide' => 'l',
-    'sidebar_nav_accordion' => true,
+    'sidebar_nav_accordion' => false,
     'sidebar_nav_animation_speed' => 300,
 
     /*
@@ -257,13 +257,13 @@ return [
     */
 
     'use_route_url' => false,
-    'dashboard_url' => 'home',
+    'dashboard_url' => 'dashboard',
     'logout_url' => 'logout',
     'login_url' => 'login',
     'register_url' => 'register',
     'password_reset_url' => 'password/reset',
     'password_email_url' => 'password/email',
-    'profile_url' => false,
+    'profile_url' => 'profile',
     'disable_darkmode_routes' => false,
 
     /*
@@ -300,148 +300,245 @@ return [
 
     'menu' => [
 
-        // =====================
-        // DASHBOARD
-        // =====================
+        /*
+        |--------------------------------------------------------------------------
+        | Dashboard
+        |--------------------------------------------------------------------------
+        */
         [
             'text' => 'Dashboard',
             'url'  => 'dashboard',
             'icon' => 'fas fa-tachometer-alt',
         ],
 
-        // =====================
-        // HR / CORE DATA
-        // =====================
+        /*
+        |--------------------------------------------------------------------------
+        | HR Management
+        |--------------------------------------------------------------------------
+        */
         [
             'header' => 'HR MANAGEMENT',
-            'can'    => 'employee.view'
+            'can'    => 'employee.view',
         ],
 
         [
-            'text' => 'Employees',
-            'url'  => 'employees',
-            'icon' => 'fas fa-id-badge',
-            'can'     => 'employee.view',
+            'text' => 'HR Management',
+            'icon' => 'fas fa-users-cog',
+            'can'  => 'employee.view',
+            'submenu' => [
+
+                [
+                    'text' => 'Employees',
+                    'url'  => 'employees',
+                    'can'  => 'employee.view',
+                ],
+
+                [
+                    'text' => 'Departments',
+                    'url'  => 'departments',
+                    'can'  => 'department.view',
+                ],
+
+                [
+                    'text' => 'Positions',
+                    'url'  => 'positions',
+                    'can'  => 'position.view',
+                ],
+
+                [
+                    'text' => 'Offices',
+                    'url'  => 'offices',
+                    'can'  => 'office.view',
+                ],
+            ],
         ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Administration
+        |--------------------------------------------------------------------------
+        */
         [
-            'text' => 'Departments',
-            'url'  => 'departments',
-            'icon' => 'fas fa-building',
-            'can'     => 'department.view',
+            'header' => 'ADMINISTRATION',
+            'can'    => 'user.view',
         ],
+
         [
-            'text' => 'Positions',
-            'url'  => 'positions',
-            'icon' => 'fas fa-briefcase',
-            'can'     => 'position.view',
-        ],
-        [
-            'text' => 'Roles',
-            'url'  => 'roles',
+            'text' => 'Administration',
             'icon' => 'fas fa-user-shield',
-            'can'     => 'role.view',
-        ],
-        [
-            'text' => 'Users',
-            'url'  => 'users',
-            'icon' => 'fas fa-users',
-            'can'     => 'user.view',
+            'can'  => 'user.view',
+            'submenu' => [
+
+                [
+                    'text' => 'Roles',
+                    'url'  => 'roles',
+                    'can'  => 'role.view',
+                ],
+
+                [
+                    'text' => 'Users',
+                    'url'  => 'users',
+                    'can'  => 'user.view',
+                ],
+            ],
         ],
 
-        // =====================
-        // ATTENDANCE
-        // =====================
+        /*
+        |--------------------------------------------------------------------------
+        | Attendance
+        |--------------------------------------------------------------------------
+        */
         [
             'header' => 'ATTENDANCE',
-            'can'    => 'attendance.view'
-        ],
-        [
-        'text' => 'Check In / Out',
-        'url'  => 'check-in-out',
-        'icon' => 'fas fa-fingerprint',
-        'can'     => 'attendance.check',
-        ],
-        [
-        'text' => 'My Attendance',
-        'url'  => 'my-attendance',
-        'icon' => 'fas fa-calendar-check',
-        'can'     => 'attendance.my',
+            // 'can'    => 'attendance.view',
         ],
 
         [
             'text' => 'Attendance',
-            'url'  => 'attendance',
             'icon' => 'fas fa-clock',
-            'can'     => 'attendance.view',
-        ],
-        [
-            'text' => 'Attendance Logs',
-            'url'  => 'attendance-logs',
-            'icon' => 'fas fa-history',
-            'can'     => 'attendance.view',
-        ],
-        [
-            'text' => 'Shifts',
-            'url'  => 'shifts',
-            'icon' => 'fas fa-business-time',
-            'can'     => 'shift.view',
-        ],
-        [
-            'text' => 'Employee Shifts',
-            'url'  => 'employee_shifts',
-            'icon' => 'fas fa-user-clock',
-            'can'     => 'shift.view',
+            // 'can'  => 'attendance.view',
+            'submenu' => [
+
+                [
+                    'text' => 'Check In / Out',
+                    'url'  => 'check-in-out',
+                    'can'  => 'attendance.check',
+                ],
+
+                [
+                    'text' => 'My Attendance',
+                    'url'  => 'my-attendance',
+                    'can'  => 'attendance.my',
+                ],
+
+                [
+                    'text' => 'Attendance Records',
+                    'url'  => 'attendance',
+                    'can'  => 'attendance.view',
+                ],
+
+                [
+                    'text' => 'Attendance Logs',
+                    'url'  => 'attendance-logs',
+                    'can'  => 'attendance.view',
+                ],
+
+                [
+                    'text' => 'Shifts',
+                    'url'  => 'shifts',
+                    'can'  => 'shift.view',
+                ],
+
+                [
+                    'text' => 'Employee Shifts',
+                    'url'  => 'employee_shifts',
+                    'can'  => 'shift.view',
+                ],
+            ],
         ],
 
-        // =====================
-        // LEAVE SYSTEM
-        // =====================
+        /*
+        |--------------------------------------------------------------------------
+        | Leave Management
+        |--------------------------------------------------------------------------
+        */
         [
             'header' => 'LEAVE MANAGEMENT',
-            'can'    => 'leave.view'
+            // 'can'    => 'leave.view',
         ],
+
         [
-            'text' => 'Leave Requests',
-            'url'  => 'leave-requests',
+            'text' => 'Leave Management',
             'icon' => 'fas fa-calendar-alt',
-            'can'     => 'leave.view',
-        ],
-        [
-            'text'    => 'My Leave',
-            'url'     => 'leave-requests/my-leave',
-            'icon'    => 'fas fa-calendar-check',
-        ],
-        [
-            'text' => 'Leave Types',
-            'url'  => 'leave-types',
-            'icon' => 'fas fa-calendar-minus',
-            'can'     => 'leave.view',
-        ],
-        [
-            'text' => 'Holidays',
-            'url'  => 'holidays',
-            'icon' => 'fas fa-gift',
-            'can'     => 'holiday.view',
+            // 'can'  => 'leave.view',
+            'submenu' => [
+
+                [
+                    'text' => 'Leave Requests',
+                    'url'  => 'leave-requests',
+                    'can'  => 'leave.view',
+                ],
+
+                [
+                    'text' => 'My Leave',
+                    'url'  => 'leave-requests/my-leave',
+                ],
+
+                [
+                    'text' => 'Leave Types',
+                    'url'  => 'leave-types',
+                    'can'  => 'leave_type.view',
+                ],
+
+                [
+                    'text' => 'Holidays',
+                    'url'  => 'holidays',
+                    'can'  => 'holiday.view',
+                ],
+            ],
         ],
 
-        // =====================
-        // ACCOUNT
-        // =====================
+        /*
+        |--------------------------------------------------------------------------
+        | Reports
+        |--------------------------------------------------------------------------
+        */
         [
-            'header' => 'ACCOUNT'
+            'header' => 'REPORTS',
+            'can'    => 'reports.daily',
         ],
 
         [
-            'text' => 'Profile',
-            'url'  => 'profile',
-            'icon' => 'fas fa-user',
-            'can'     => 'profile.view',
+            'text' => 'Reports',
+            'icon' => 'fas fa-chart-bar',
+            'can'  => 'reports.daily',
+            'submenu' => [
+
+                [
+                    'text' => 'Daily Attendance',
+                    'url'  => 'reports/attendance/daily',
+                    'icon' => 'far fa-calendar-day',
+                    'can'  => 'reports.daily',
+                ],
+
+                [
+                    'text' => 'Monthly Attendance',
+                    'url'  => 'reports/attendance/monthly',
+                    'icon' => 'far fa-calendar-alt',
+                    'can'  => 'reports.monthly',
+                ],
+
+                [
+                    'text' => 'Quarterly Attendance',
+                    'url'  => 'reports/attendance/quarterly',
+                    'icon' => 'fas fa-chart-line',
+                    'can'  => 'reports.quarterly',
+                ],
+
+            ],
         ],
-        // [
-        //     'text' => 'Logout',
-        //     'url'  => 'logout',
-        //     'icon' => 'fas fa-sign-out-alt',
-        // ],
+        /*
+        |--------------------------------------------------------------------------
+        | Account
+        |--------------------------------------------------------------------------
+        */
+        [
+            'header' => 'ACCOUNT',
+        ],
+
+        [
+            'text' => 'Account',
+            'icon' => 'fas fa-user-circle',
+            'submenu' => [
+
+                [
+                    'text' => 'Profile',
+                    'url'  => 'profile',
+                    'can'  => 'profile.view',
+                ],
+            ],
+        ],
+
     ],
 
     /*

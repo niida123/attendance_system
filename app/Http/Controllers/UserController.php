@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Employee;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -60,6 +61,8 @@ class UserController extends Controller
 
         $roleId = $validated['id'];
         unset($validated['id']); // not a user column — would be silently dropped anyway, but be explicit
+
+        $this->syncUserColumns($validated, $validated['username'], $roleId);
 
         $validated['password'] = Hash::make($validated['password']);
 
@@ -118,6 +121,8 @@ class UserController extends Controller
         $roleId = $validated['id'];
         unset($validated['id']);
 
+        $this->syncUserColumns($validated, $validated['username'], $roleId);
+
         if (!empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         } else {
@@ -133,6 +138,28 @@ class UserController extends Controller
             'success' => true,
             'message' => 'User "' . $user->username . '" updated successfully.',
         ]);
+    }
+
+    /**
+     * Keep the payload aligned with the actual users table schema.
+     * Some installs use `username` + Spatie roles, others still have
+     * legacy `name` and `role_id` columns.
+     */
+    private function syncUserColumns(array &$validated, string $username, int|string $roleId): void
+    {
+        $table = (new User())->getTable();
+
+        if (Schema::hasColumn($table, 'name')) {
+            $validated['name'] = $username;
+        }
+
+        if (Schema::hasColumn($table, 'username')) {
+            $validated['username'] = $username;
+        }
+
+        if (Schema::hasColumn($table, 'role_id')) {
+            $validated['role_id'] = $roleId;
+        }
     }
 
     /**

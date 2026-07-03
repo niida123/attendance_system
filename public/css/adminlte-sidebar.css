@@ -1,0 +1,244 @@
+/* ==========================
+   SUBMENU STYLE
+========================== */
+
+.main-sidebar .nav-treeview {
+    padding-left: 12px;
+}
+
+/* Submenu Item */
+.main-sidebar .nav-treeview .nav-link {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+
+    padding: 0.65rem 1rem;
+    margin: 3px 8px;
+    border-radius: 8px;
+
+    color: #cbd5e1;
+    transition: all .2s ease;
+}
+
+/* Dot Container */
+.main-sidebar .nav-treeview .nav-icon {
+    width: 16px;
+    min-width: 16px;
+    height: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-right: 10px;
+}
+
+/* Dot */
+.main-sidebar .nav-treeview .nav-icon::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+    background: #94a3b8;
+
+    transition: all .25s ease;
+}
+
+/* Text */
+.main-sidebar .nav-treeview .nav-link p {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Hover */
+.main-sidebar .nav-treeview .nav-link:hover {
+    background: rgba(83, 78, 179, 0.10);
+    color: #ffffff;
+}
+
+.main-sidebar .nav-treeview .nav-link:hover .nav-icon::before {
+    background: #6c63ff;
+    transform: scale(1.4);
+}
+
+/* Active */
+.main-sidebar .nav-treeview .nav-link.active {
+    background: rgba(83, 78, 179, 0.15) !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+.main-sidebar .nav-treeview .nav-link.active .nav-icon::before {
+    background: #6c63ff;
+    transform: scale(1.5);
+}
+
+/* Optional left indicator */
+.main-sidebar .nav-treeview .nav-link.active {
+    border-left: 3px solid #6c63ff;
+}
+/* ==========================================
+   COLLAPSED SIDEBAR (ICON ONLY)
+========================================== */
+
+
+/* Hide text */
+.sidebar-mini.sidebar-collapse .brand-text,
+.sidebar-mini.sidebar-collapse .nav-link p,
+.sidebar-mini.sidebar-collapse .nav-header {
+    display: none !important;
+}
+
+/* Keep icons visible */
+.sidebar-mini.sidebar-collapse .nav-sidebar .nav-icon {
+    display: inline-flex !important;
+    width: 1.6rem;
+    margin: 0 !important;
+    font-size: 1.1rem;
+    justify-content: center;
+}
+
+
+/* Hide submenu popup */
+.sidebar-mini.sidebar-collapse .main-sidebar .nav-treeview {
+    display: none !important;
+}
+
+/* Hide arrows */
+.sidebar-mini.sidebar-collapse .right,
+.sidebar-mini.sidebar-collapse .fas.fa-angle-left {
+    display: none !important;
+}
+
+/* Logo center */
+.sidebar-mini.sidebar-collapse .brand-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Keep sidebar width fixed */
+.sidebar-mini.sidebar-collapse .main-sidebar,
+.sidebar-mini.sidebar-collapse .main-sidebar::before {
+    width: 4.6rem !important;
+}
+.sidebar-collapse .brand-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sidebar-collapse .brand-link .fas {
+    font-size: 1.5rem;
+    color: #fff;
+}
+
+/* Disable hover expansion */
+.sidebar-mini.sidebar-collapse .main-sidebar:hover,
+.sidebar-mini.sidebar-collapse .main-sidebar.sidebar-focused {
+    width: 4.6rem !important;
+}
+
+/* Keep sidebar fixed */
+.sidebar-mini.sidebar-collapse .main-sidebar,
+.sidebar-mini.sidebar-collapse .main-sidebar::before {
+    width: 4.6rem !important;
+}
+
+/* Hide submenu popups */
+.sidebar-mini.sidebar-collapse .nav-treeview {
+    display: none !important;
+}
+
+/* ======= Fixes / Overrides ======= */
+/* Ensure the sidebar sits above content and doesn't produce odd dark blocks */
+.main-sidebar {
+    z-index: 1038;
+    background-color: #343a40; /* keep dark theme consistent */
+}
+
+/* Remove extra top gap and ensure brand is centered and not overflowing */
+.main-sidebar .brand-link {
+    padding: 0.5rem 0.75rem;
+    height: auto;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tidy top-level nav items: reduce margin, align icons and text */
+.main-sidebar .nav-sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.55rem 0.9rem;
+    margin: 2px 6px;
+    border-radius: 8px;
+    color: #cbd5e1;
+}
+
+.main-sidebar .nav-sidebar .nav-link .nav-icon {
+    margin-right: 12px;
+    min-width: 1.6rem;
+    justify-content: center;
+}
+
+/* Make sure the main content doesn't sit under the sidebar (desktop only) */
+@media (min-width: 768px) {
+    .content-wrapper,
+    .main-footer,
+    .main-header {
+        transition: margin-left 0.3s ease-in-out;
+    }
+
+    /* When sidebar is collapsed, keep layout consistent */
+    .sidebar-collapse .content-wrapper,
+    .sidebar-collapse .main-footer,
+    .sidebar-collapse .main-header {
+        margin-left: 4.6rem !important;
+    }
+
+    /* Restore normal margin when sidebar is expanded (match AdminLTE default) */
+    .main-sidebar:not(.sidebar-collapse) ~ .content-wrapper,
+    .main-sidebar:not(.sidebar-collapse) ~ .main-footer,
+    .main-sidebar:not(.sidebar-collapse) ~ .main-header {
+        margin-left: 250px;
+    }
+}
+
+/* Small visual tweak for collapsed icons */
+.sidebar-mini.sidebar-collapse .nav-icon {
+    width: 2.1rem !important;
+}
+
+/* Brand fixes: remove extra dark block and white background on the logo */
+.main-sidebar .brand-link {
+    background-color: transparent !important;
+    border-bottom: none !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 1040;
+}
+
+.main-sidebar .brand-link .brand-image,
+.main-sidebar .brand-link img.brand-image {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* If you prefer the text logo, make sure it fits and doesn't wrap */
+.main-sidebar .brand-link .brand-text {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

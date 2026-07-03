@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Position;
+use App\Models\Office;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+
 
 class EmployeeController extends Controller
 {
@@ -15,13 +17,14 @@ class EmployeeController extends Controller
     {
         $departments = Department::orderBy('department_name')->get();
         $positions   = Position::orderBy('position_name')->get();
+        $offices     = Office::orderBy('office_name')->get();
 
-        return view('employees.index', compact('departments', 'positions'));
+        return view('employees.index', compact('departments', 'positions', 'offices'));
     }
 
     public function getData()
     {
-        $employees = Employee::with(['department', 'position'])
+        $employees = Employee::with(['department', 'position', 'office'])
             ->select(
                 'employee_id',
                 'employee_code',
@@ -34,7 +37,8 @@ class EmployeeController extends Controller
                 'basic_salary',
                 'status',
                 'department_id',
-                'position_id'
+                'position_id',
+                'office_id'
             )
             ->latest()
             ->get();
@@ -59,6 +63,7 @@ class EmployeeController extends Controller
             'photo'         => 'nullable|image|mimes:jpeg,png|max:2048',
             'department_id' => 'required|exists:departments,department_id',
             'position_id'   => 'required|exists:positions,position_id',
+            'office_id'     => 'required|exists:offices,office_id',
             'hire_date'     => 'required|date',
             'basic_salary'  => 'nullable|numeric|min:0|max:9999999999.99',
             'status'        => 'required|in:Active,Inactive',
@@ -88,7 +93,7 @@ class EmployeeController extends Controller
 
     public function show(Employee $employee)
     {
-        $employee->load(['department', 'position']);
+        $employee->load(['department', 'position', 'office']);
 
         return response()->json([
             'success' => true,
@@ -110,6 +115,7 @@ class EmployeeController extends Controller
             'photo'         => 'nullable|image|mimes:jpeg,png|max:2048',
             'department_id' => 'required|exists:departments,department_id',
             'position_id'   => 'required|exists:positions,position_id',
+            'office_id'     => 'required|exists:offices,office_id',
             'hire_date'     => 'required|date',
             'basic_salary'  => 'nullable|numeric|min:0|max:9999999999.99',
             'status'        => 'required|in:Active,Inactive',

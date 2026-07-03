@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\Employee;
+use App\Models\Office;
+use Illuminate\Support\Facades\DB;
 
 class AttendanceLogController extends Controller
 {
@@ -25,15 +27,20 @@ class AttendanceLogController extends Controller
      */
     public function getData()
     {
-        $logs = AttendanceLog::with('employee:employee_id,employee_code,first_name,last_name')
+        $logs = AttendanceLog::with('employee:employee_id,employee_code,first_name,last_name,photo')
             ->select(
                 'log_id',
                 'employee_id',
+                'office_id',
                 'log_datetime',
                 'log_type',
                 'device_name',
                 'ip_address',
                 'gps_location',
+                'latitude',
+                'longitude',
+                'distance_from_office',
+                'is_verified',
                 'created_at'
             )->latest()->get();
 
@@ -61,19 +68,33 @@ class AttendanceLogController extends Controller
             ], 422);
         }
 
+        $user = Auth::user();
+
+        if (! $user || ! $user->employee) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User is not linked to an employee record.',
+            ], 422);
+        }
+
         $log = AttendanceLog::create([
-            'employee_id'  => auth()->user()->employee_id, // auto from logged-in user
+            'employee_id'  => $user->employee_id, // auto from logged-in user
+            'office_id'    => $user->employee->office_id, // auto from employee's office
             'log_type'     => $request->log_type,          // only IN or OUT button
             'log_datetime' => now(),                        // auto current time
             'ip_address'   => $request->ip(),              // auto from request
             'device_name'  => $request->userAgent(),       // auto from browser
             'gps_location' => $request->gps_location,      // auto from JS GPS
+            'latitude'     => $request->latitude,          // auto from JS GPS
+            'longitude'    => $request->longitude,         // auto from JS GPS
+            'distance_from_office' => $request->distance_from_office, // auto from JS GPS
+            'is_verified'    => false,                     // auto set to false initially
         ]);
 
         return response()->json([
             'success' => true,
             'message' => 'Attendance logged successfully.',
-            'data'    => $log->load('employee:employee_id,employee_code,first_name,last_name'),
+            'data'    => $log->load('employee:employee_id,employee_code,first_name,last_name,photo'),
         ], 201);
     }
 
@@ -82,7 +103,7 @@ class AttendanceLogController extends Controller
      */
     public function show($id)
     {
-        $log = AttendanceLog::with('employee:employee_id,employee_code,first_name,last_name')->findOrFail($id);
+        $log = AttendanceLog::with('employee:employee_id,employee_code,first_name,last_name,photo')->findOrFail($id);
 
         return response()->json([
             'success' => true,
@@ -104,4 +125,5 @@ class AttendanceLogController extends Controller
             'message' => 'Attendance log deleted successfully.',
         ]);
     }
+
 }

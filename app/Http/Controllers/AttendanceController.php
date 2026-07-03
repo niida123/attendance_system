@@ -151,6 +151,12 @@ class AttendanceController extends Controller
                         'late_minutes'    => $row->late_minutes,
                         'device_name'     => $latestLog ? $latestLog->device_name  : null,
                         'gps_location'    => $latestLog ? $latestLog->gps_location : null,
+                        'device_name'          => $latestLog ? $latestLog->device_name  : null,
+                        'gps_location'         => $latestLog ? $latestLog->gps_location : null,
+                        'latitude'             => $latestLog ? $latestLog->latitude : null,
+                        'longitude'            => $latestLog ? $latestLog->longitude : null,
+                        'distance_from_office' => $latestLog ? $latestLog->distance_from_office : null,
+                        'is_verified'          => $latestLog ? $latestLog->is_verified : null,
                     ];
                 });
 
@@ -178,6 +184,11 @@ class AttendanceController extends Controller
             ->map(function ($row) {
                 $emp = $row->employee;
 
+                $latestLog = AttendanceLog::where('employee_id', $row->employee_id)
+                    ->whereDate('log_datetime', $row->attendance_date)
+                    ->latest('log_datetime')
+                    ->first();
+
                 return [
                     'attendance_id'  => $row->attendance_id,
                     'attendance_date'=> $row->attendance_date,
@@ -187,41 +198,48 @@ class AttendanceController extends Controller
                     'late_minutes'   => $row->late_minutes,
                     'overtime_hours' => $row->overtime_hours,
                     'status'         => $row->status,
+                    'is_verified'    => $latestLog?->is_verified,
+                    'distance_from_office' => $latestLog?->distance_from_office,
                     'employee'       => $emp ? [
                         'employee_id'   => $emp->employee_id,
                         'first_name'    => $emp->first_name,
                         'last_name'     => $emp->last_name,
-                        // Flat string read by the JS department filter
                         'department'    => $emp->department?->department_name ?? null,
                         'department_id' => $emp->department?->department_id  ?? null,
                     ] : null,
                 ];
             });
 
-        return response()->json([
-            'success' => true,
-            'data'    => $attendances,
-        ]);
+        return response()->json(['success' => true, 'data' => $attendances]);
     }
 
     /**
      * Check In
      */
+    /**
+     * How many minutes before shift start an employee is allowed to check in.
+     */
+    private const EARLY_CHECKIN_GRACE_MINUTES = 30;
+
     public function checkIn(Request $request)
     {
         try {
             $employeeId = Auth::user()->employee_id;
             $today = Carbon::now('Asia/Phnom_Penh')->format('Y-m-d');
+            $now   = Carbon::now('Asia/Phnom_Penh');
 
-            $hasShift = EmployeeShift::where('employee_id', $employeeId)
+            $shift = EmployeeShift::with('shift')
+                ->where('employee_id', $employeeId)
                 ->where('effective_from', '<=', $today)
                 ->where(function ($q) use ($today) {
                     $q->whereNull('effective_to')
                         ->orWhere('effective_to', '>=', $today);
                 })
-                ->exists();
+                ->latest('effective_from')
+                ->first()
+                ?->shift;
 
-            if (!$hasShift) {
+            if (!$shift) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You have no shift assigned for today. Please contact your administrator.',
@@ -240,29 +258,77 @@ class AttendanceController extends Controller
                 ]);
             }
 
+            /* ── Shift time window checks ─────────────────────────── */
+            $shiftStart = Carbon::parse($today . ' ' . $shift->start_time, 'Asia/Phnom_Penh');
+            $earliestAllowed = $shiftStart->copy()->subMinutes(self::EARLY_CHECKIN_GRACE_MINUTES);
+
+            if ($now->lt($earliestAllowed)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You cannot check in before ' . $earliestAllowed->format('h:i A') .
+                                '. Your shift starts at ' . $shiftStart->format('h:i A') . '.',
+                ], 422);
+            }
+
+            // Late threshold: shift's configured grace period (e.g. late_after_minutes), fallback 0
+            $lateAfterMinutes = $shift->late_after_minutes ?? 0;
+            $lateThreshold = $shiftStart->copy()->addMinutes($lateAfterMinutes);
+
+            $lateMinutes = 0;
+            $status = 'Present';
+
+            if ($now->gt($lateThreshold)) {
+                $lateMinutes = $lateThreshold->diffInMinutes($now);
+                $status = 'Late';
+            }
+
+            /* ── GPS verification ─────────────────────────────────── */
+            $employee = Employee::with('office')->find($employeeId);
+            $office   = $employee?->office;
+
+            $lat = $request->filled('latitude') ? (float) $request->latitude : null;
+            $lng = $request->filled('longitude') ? (float) $request->longitude : null;
+
+            $distance = null;
+            $isVerified = false;
+
+            if ($office && $lat !== null && $lng !== null) {
+                $distance = $this->calculateDistance($office->latitude, $office->longitude, $lat, $lng);
+                $allowedRadius = $office->radius_meters ?? 200;
+                $isVerified = $distance !== null && $distance <= $allowedRadius;
+            }
+
             AttendanceLog::create([
-                'employee_id'  => $employeeId,
-                'log_datetime' => Carbon::now('Asia/Phnom_Penh'),
-                'log_type'     => 'Check In',
-                'ip_address'   => $request->ip(),
-                'device_name'  => substr($request->userAgent(), 0, 500),
-                'gps_location' => $request->gps_location,
+                'employee_id'          => $employeeId,
+                'office_id'            => $office?->office_id,
+                'log_datetime'         => $now,
+                'log_type'             => 'Check In',
+                'ip_address'           => $request->ip(),
+                'device_name'          => substr($request->userAgent(), 0, 500),
+                'gps_location'         => $request->gps_location,
+                'latitude'             => $lat,
+                'longitude'            => $lng,
+                'distance_from_office' => $distance,
+                'is_verified'          => $isVerified,
             ]);
 
             $attendance = Attendance::firstOrCreate(
                 ['employee_id' => $employeeId, 'attendance_date' => $today],
-                ['status' => 'Present']
+                ['status' => $status]
             );
 
             if (!$attendance->check_in) {
-                $attendance->check_in = Carbon::now('Asia/Phnom_Penh')->format('H:i:s');
-                $attendance->status   = 'Present';
+                $attendance->check_in     = $now->format('H:i:s');
+                $attendance->status       = $status;
+                $attendance->late_minutes = $lateMinutes;
                 $attendance->save();
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Checked in successfully.',
+                'message' => $status === 'Late'
+                    ? "Checked in successfully. You are {$lateMinutes} minute(s) late."
+                    : 'Checked in successfully.',
                 'data'    => $attendance,
             ]);
 
@@ -293,13 +359,36 @@ class AttendanceController extends Controller
         $employeeId = $user->employee_id;
         $today = Carbon::now('Asia/Phnom_Penh')->format('Y-m-d');
 
+        $employee = Employee::with('office')->find($employeeId);
+        $office   = $employee?->office;
+
+        $distance = null;
+        $isVerified = false;
+
+        if ($office && $request->latitude && $request->longitude) {
+            $distance = $this->calculateDistance(
+                $office->latitude,
+                $office->longitude,
+                $request->latitude,
+                $request->longitude
+            );
+
+            $allowedRadius = $office->radius_meters ?? 200;
+            $isVerified = $distance !== null && $distance <= $allowedRadius;
+        }
+
         AttendanceLog::create([
-            'employee_id'  => $employeeId,
-            'log_datetime' => Carbon::now('Asia/Phnom_Penh'),
-            'log_type'     => 'Check Out',
-            'ip_address'   => $request->ip(),
-            'device_name'  => substr($request->userAgent(), 0, 500),
-            'gps_location' => $request->gps_location,
+            'employee_id'          => $employeeId,
+            'office_id'            => $office?->office_id,
+            'log_datetime'         => Carbon::now('Asia/Phnom_Penh'),
+            'log_type'             => 'Check Out',
+            'ip_address'           => $request->ip(),
+            'device_name'          => substr($request->userAgent(), 0, 500),
+            'gps_location'         => $request->gps_location,
+            'latitude'             => $request->latitude,
+            'longitude'            => $request->longitude,
+            'distance_from_office' => $distance,
+            'is_verified'          => $isVerified,
         ]);
 
         $attendance = Attendance::where('employee_id', $employeeId)
@@ -364,5 +453,28 @@ class AttendanceController extends Controller
             'success' => true,
             'message' => 'Attendance deleted successfully.',
         ]);
+    }
+
+    /**
+     * Calculate distance in meters between two GPS coordinates.
+     */
+    private function calculateDistance($lat1, $lng1, $lat2, $lng2)
+    {
+        if (is_null($lat1) || is_null($lng1) || is_null($lat2) || is_null($lng2)) {
+            return null;
+        }
+
+        $earthRadius = 6371000; // meters
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLng = deg2rad($lng2 - $lng1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($dLng / 2) * sin($dLng / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return round($earthRadius * $c, 2);
     }
 }

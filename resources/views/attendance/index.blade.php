@@ -217,6 +217,9 @@
                                         <th width="110" class="text-center"
                                             style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
                                             Status</th>
+                                        <th width="110" class="text-center" 
+                                            style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
+                                            Verified</th>
                                         <th width="100" class="text-center"
                                             style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">
                                             Actions</th>
@@ -829,6 +832,15 @@
                         data: 'status',
                         className: 'text-center',
                         render: s => statusBadge(s)
+                    },
+                    {
+                        data: 'is_verified',
+                        className: 'text-center',
+                        render: v => v === null || v === undefined
+                            ? '<span style="color:#d1d5db;">—</span>'
+                            : (v
+                                ? '<span class="badge-present" style="padding:5px 12px;border-radius:20px;font-size:.75rem;font-weight:600;"><i class="fas fa-map-marker-alt mr-1"></i>Verified</span>'
+                                : '<span class="badge-absent" style="padding:5px 12px;border-radius:20px;font-size:.75rem;font-weight:600;"><i class="fas fa-map-marker-alt mr-1"></i>Out of Range</span>')
                     },
                     {
                         data: 'attendance_id',

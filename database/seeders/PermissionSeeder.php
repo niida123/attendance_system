@@ -22,6 +22,9 @@ class PermissionSeeder extends Seeder
             // Dashboard
             'dashboard.view',
 
+            // Office Management
+            'office.view',
+
             // Employee Management
             'employee.view',
             'department.view',
@@ -35,6 +38,11 @@ class PermissionSeeder extends Seeder
             'attendance.check',
             'attendance.my',
             'attendance.view',
+
+            // reports
+            'reports.daily',
+            'reports.monthly',
+            'reports.quarterly',
 
             // Shift
             'shift.view',
@@ -78,7 +86,7 @@ class PermissionSeeder extends Seeder
             'employee.view',
             'department.view',
             'position.view',
-
+            'office.view',
             'attendance.check',
             'attendance.my',
             'attendance.view',
@@ -86,6 +94,11 @@ class PermissionSeeder extends Seeder
             'leave.my',
             'leave.view',
             'leave_type.view',
+
+            // report 
+            'reports.daily',
+            'reports.monthly',
+            'reports.quarterly',
 
             'holiday.view',
             'holiday.create',
@@ -101,9 +114,16 @@ class PermissionSeeder extends Seeder
             'attendance.check',
             'attendance.my',
             'attendance.view',
+            'leave.my',
+            'leave.view',
 
             'shift.view',
             'employee_shift.view',
+
+            // report
+            'reports.daily',
+            'reports.monthly',
+            'reports.quarterly',
 
             'holiday.view',
 

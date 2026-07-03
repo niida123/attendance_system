@@ -684,30 +684,39 @@
                         }
                     },
                     {
-                        data: 'shift_name',
-                        render: name => {
-                            const colors = [
-                                { bg: '#e0e7ff', color: '#4f46e5' },
-                                { bg: '#d1fae5', color: '#059669' },
-                                { bg: '#fce7f3', color: '#db2777' },
-                                { bg: '#fef3c7', color: '#d97706' },
-                                { bg: '#ede9fe', color: '#7c3aed' },
-                                { bg: '#fee2e2', color: '#ef4444' },
-                                { bg: '#e0f2fe', color: '#0284c7' },
-                            ];
-                            const { bg, color } = colors[name.charCodeAt(0) % colors.length];
+                        data: null,
+                        render: (data, type, row) => {
 
-                            return `<span style="
-                                background:${bg};
-                                color:${color};
-                                padding:5px 12px;
-                                border-radius:20px;
-                                font-size:.78rem;
-                                font-weight:600;
-                                display:inline-block;
-                                letter-spacing:.2px;">
-                                ${name}
-                            </span>`;
+                            const name = row.shift_name || '—';
+                            const start = row.shift_start ? row.shift_start.slice(0,5) : null;
+                            const end   = row.shift_end ? row.shift_end.slice(0,5) : null;
+
+                            const time = (start && end) ? `${start} - ${end}` : '—';
+
+                            return `
+                                <div style="display:flex; flex-direction:column; gap:2px; align-items:center;">
+
+                                    <!-- SHIFT NAME BADGE -->
+                                    <span style="
+                                        display:inline-block;
+                                        padding:3px 10px;
+                                        border-radius:20px;
+                                        font-size:.75rem;
+                                        font-weight:600;
+                                        background:#e0e7ff;
+                                        color:#4f46e5;
+                                        width:fit-content;
+                                    ">
+                                        ${name}
+                                    </span>
+
+                                    <!-- TIME (NORMAL TEXT) -->
+                                    <span style="font-size:.75rem; color:#6b7280;">
+                                        ${time}
+                                    </span>
+
+                                </div>
+                            `;
                         }
                     },
                     {

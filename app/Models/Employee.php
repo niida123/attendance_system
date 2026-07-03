@@ -17,6 +17,7 @@ class Employee extends Model
         'phone',
         'email',
         'address',
+        'office_id',
         'photo',
         'department_id',
         'position_id',
@@ -30,6 +31,10 @@ class Employee extends Model
         'basic_salary' => 'decimal:2',
     ];
 
+    public function office()
+    {
+        return $this->belongsTo(Office::class, 'office_id', 'office_id');
+    }
     public function department()
     {
         return $this->belongsTo(

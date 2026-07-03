@@ -37,17 +37,21 @@ class EmployeeShiftController extends Controller
                 'employee_shifts.shift_id',
                 'employee_shifts.effective_from',
                 'employee_shifts.effective_to',
-                \DB::raw("CONCAT(employees.first_name, ' ', employees.last_name) AS employee_name"),
+
+                DB::raw("CONCAT(employees.first_name, ' ', employees.last_name) AS employee_name"),
                 'employees.photo',
+
                 'shifts.shift_name',
+                'shifts.start_time as shift_start',
+                'shifts.end_time as shift_end',
+
                 'positions.position_name',
                 'departments.department_name'
-
             )
             ->join('employees', 'employees.employee_id', '=', 'employee_shifts.employee_id')
             ->join('shifts', 'shifts.shift_id', '=', 'employee_shifts.shift_id')
             ->join('positions', 'positions.position_id', '=', 'employees.position_id')
-            ->join('departments', 'departments.department_id', '=', 'employees.department_id')  // ← add this
+            ->join('departments', 'departments.department_id', '=', 'employees.department_id')
             ->orderBy('employee_shifts.employee_shift_id', 'desc')
             ->get();
 

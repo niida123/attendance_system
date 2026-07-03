@@ -210,6 +210,7 @@
                                     <th style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">Employee</th>
                                     <th style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">Department</th>
                                     <th style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">Position</th>
+                                    <th style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;">Office</th>
                                     <th style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;" width="100">Status</th>
                                     <th style="padding:14px 20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;border-bottom:2px solid #eef0f8;border-top:none;" width="150" class="text-center">Actions</th>
                                 </tr>
@@ -302,6 +303,17 @@
                                 @endforeach
                             </select>
                             <span class="text-danger small d-block mt-1" id="err_position_id"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="modal-label">OFFICE</label>
+                            <select id="office_id" class="form-control form-control-sm modal-input">
+                                <option value="">— Select —</option>
+                                @foreach ($offices as $office)
+                                    <option value="{{ $office->office_id }}">{{ $office->office_name }}</option>
+                                @endforeach
+                            </select>
+                            <span class="text-danger small d-block mt-1" id="err_office_id"></span>
                         </div>
 
                         <div class="form-group mb-3">
@@ -924,24 +936,29 @@
                     },
                     {
                         data: 'position.position_name',
-                        render: function(pos, type) {
-                            if (type === 'filter' || type === 'sort') {
-                                return pos || '';
-                            }
-                            return pos ? `<span style="color:#6b7280;">${pos}</span>`
-                                    : '<span style="color:#d1d5db;">—</span>';
+                        render: function (position, type) {
+                            if (type === 'filter' || type === 'sort') return position || '';
+                            return position ? `<span style="color:#6b7280;">${position}</span>`
+                                        : '<span style="color:#d1d5db;">—</span>';
+                        }
+                    },
+                    {
+                        data: 'office.office_name',
+                        render: function (office, type) {
+                            if (type === 'filter' || type === 'sort') return office || '';
+                            return office ? `<span style="color:#6b7280;">${office}</span>`
+                                        : '<span style="color:#d1d5db;">—</span>';
                         }
                     },
                     {
                         data: 'status',
-                        className: 'text-center',
                         render: function (data, type) {
-                            if (type === 'display') {
-                                return data === 'Active'
-                                    ? '<span class="badge-active"><i class="fas fa-circle mr-1" style="font-size:.5rem;vertical-align:middle;"></i>Active</span>'
-                                    : '<span class="badge-inactive"><i class="fas fa-circle mr-1" style="font-size:.5rem;vertical-align:middle;"></i>Inactive</span>';
+                            if (type === 'filter' || type === 'sort') {
+                                return data || '';
                             }
-                            return data;
+                            return data === 'Active'
+                                ? '<span class="badge-active"><i class="fas fa-circle mr-1" style="font-size:.5rem;vertical-align:middle;"></i>Active</span>'
+                                : '<span class="badge-inactive"><i class="fas fa-circle mr-1" style="font-size:.5rem;vertical-align:middle;"></i>Inactive</span>';
                         }
                     },
                     {
@@ -976,7 +993,7 @@
                 let departmentFilter = $('#filterDepartment').val().toLowerCase().trim();
 
                 let rowDepartment = (data[2] || '').toLowerCase().trim();
-                let rowStatus = (data[4] || '').toLowerCase().trim();
+                let rowStatus = (data[5] || '').toLowerCase().trim();
 
                 // Department check
                 if (departmentFilter && rowDepartment !== departmentFilter) {
@@ -1202,6 +1219,7 @@
                                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
                                         ${row('building',       'Department',   fmt(d.department?.department_name))}
                                         ${row('briefcase',      'Position',     fmt(d.position?.position_name))}
+                                        ${row('building', 'Office', fmt(d.office?.office_name))}
                                         ${row('venus-mars',     'Gender',       `<span style="background:${gBg};color:${gColor};padding:2px 8px;border-radius:20px;font-size:.72rem;font-weight:600;">${d.gender}</span>`)}
                                         ${row('calendar-alt',   'Hire Date',    fmtDate(d.hire_date))}
                                         ${row('birthday-cake',  'Date of Birth',fmtDate(d.date_of_birth))}
@@ -1319,6 +1337,7 @@
                                 );
                             }
                             $('#position_id').val(d.position_id);
+                            $('#office_id').val(d.office_id);
                             $('#basic_salary').val(d.basic_salary);
                             $('#status').val(d.status);
 
@@ -1372,6 +1391,7 @@
                 payload.append('address',        $('#address').val().trim());
                 payload.append('department_id',  $('#department_id').val());
                 payload.append('position_id',    $('#position_id').val());
+                payload.append('office_id',      $('#office_id').val());
                 payload.append('hire_date',      $('#hire_date').val());
                 payload.append('basic_salary',   $('#basic_salary').val());
                 payload.append('status',         $('#status').val());
@@ -1462,7 +1482,7 @@
             /* ── Helpers ────────────────────────────────────────────── */
             function resetForm() {
                 $('#employee_id, #employee_code, #first_name, #last_name, #phone, #email, #address, #basic_salary, #date_of_birth, #hire_date').val('');
-                $('#gender, #department_id, #position_id, #status').val('');
+                $('#gender, #department_id, #position_id, #office_id, #status').val('');
                 $('#photo').val('');
                 $('#photoPreview').remove();
                 clearErrors();
@@ -1470,7 +1490,7 @@
 
             function clearErrors() {
                 ['employee_code','first_name','last_name','gender','date_of_birth','phone',
-                 'email','address','photo','department_id','position_id','hire_date','basic_salary','status'
+                 'email','address','photo','department_id','position_id','office_id','hire_date','basic_salary','status'
                 ].forEach(function(f) {
                     $('#' + f).removeClass('is-invalid');
                     $('#err_' + f).text('');

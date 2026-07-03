@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Employee;
 use App\Models\Attendance;
 use App\Models\LeaveRequest;
@@ -28,7 +29,15 @@ class DashboardController extends Controller
      */
     public function getData()
     {
+        /** @var User|null $user */
         $user  = Auth::user();
+
+        if (! $user) {
+            return response()->json([
+                'message' => 'Unauthenticated.',
+            ], 401);
+        }
+
         $today = Carbon::now('Asia/Phnom_Penh')->format('Y-m-d');
         $month = Carbon::now('Asia/Phnom_Penh')->format('Y-m');
 
