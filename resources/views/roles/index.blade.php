@@ -61,11 +61,13 @@
                         </div>
 
                         <!-- Add Button -->
+                        @can('role.create')
                         <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#roleModal"
                             id="btnCreate"
                             style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-weight:600;font-size:.82rem;letter-spacing:.2px;box-shadow:0 4px 14px rgba(79,70,229,.35);">
                             <i class="fas fa-plus mr-1"></i> Add Role
                         </button>
+                        @endcan
 
                     </div>
 
@@ -580,6 +582,7 @@
                         className: 'text-center',
                         render: (id, t, row) => `
                         <div class="d-flex align-items-center justify-content-center" style="gap:6px;">
+                            @can('role.edit')
                             <button type="button" class="btn-edit-row btn-edit"
                                     data-id="${id}" data-toggle="tooltip" title="Edit">
                                 <i class="fas fa-pen"></i>
@@ -589,6 +592,7 @@
                                     data-toggle="tooltip" title="Delete">
                                 <i class="fas fa-trash"></i>
                             </button>
+                            @endcan
                         </div>
                     `
                     }

@@ -39,11 +39,13 @@
 
                     <div class="d-flex align-items-center ml-auto mt-2" style="gap:10px;flex-wrap:wrap;">
                         {{-- Export --}}
+                        @can('attendance.export')
                         <button type="button" id="btnExport"
                             class="btn btn-sm"
                             style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-weight:600;font-size:.82rem;letter-spacing:.2px;box-shadow:0 4px 14px rgba(16,185,129,.3);white-space:nowrap;">
                             <i class="fas fa-file-excel mr-1"></i> Export CSV
                         </button>
+                        @endcan
                     </div>
                 </div>
 

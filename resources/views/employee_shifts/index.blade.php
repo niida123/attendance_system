@@ -65,6 +65,7 @@
                         </div>
 
                         <!-- Add Button -->
+                        @can('employee_shift.assign')
                         <button type="button"
                                 class="btn btn-sm"
                                 data-toggle="modal"
@@ -73,6 +74,7 @@
                                 style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-weight:600;font-size:.82rem;letter-spacing:.2px;box-shadow:0 4px 14px rgba(79,70,229,.35);">
                             <i class="fas fa-plus mr-1"></i> Add Employee Shift
                         </button>
+                        @endcan
 
                     </div>
 
@@ -154,16 +156,20 @@
                         <div class="ml-auto d-flex" style="gap:8px;">
 
                             {{-- Export CSV --}}
+                            @can('employee_shift.export')
                             <button id="btnExport" title="Export CSV"
                                 style="width:34px;height:34px;border-radius:9px;border:1.5px solid #e5e7eb;background:#fff;color:#6b7280;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;">
                                 <i class="fas fa-download" style="font-size:.8rem;"></i>
                             </button>
+                            @endcan
 
                             {{-- Print --}}
+                            @can('employee_shift.export')
                             <button id="btnPrint" title="Print"
                                 style="width:34px;height:34px;border-radius:9px;border:1.5px solid #e5e7eb;background:#fff;color:#6b7280;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;">
                                 <i class="fas fa-print" style="font-size:.8rem;"></i>
                             </button>
+                            @endcan
 
                         </div>
                     </div>
@@ -748,15 +754,19 @@
                         className: 'text-center',
                         render: (id, t, row) => `
                             <div class="d-flex align-items-center justify-content-center" style="gap:6px;">
+                                @can('employee_shift.edit')
                                 <button type="button" class="btn-edit-row btn-edit"
                                         data-id="${id}" data-toggle="tooltip" title="Edit">
                                     <i class="fas fa-pen"></i>
                                 </button>
+                                @endcan
+                                @can('employee_shift.remove')
                                 <button type="button" class="btn-delete-row btn-delete"
                                         data-id="${id}" data-name="${row.employee_name}"
                                         data-toggle="tooltip" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
+                                @endcan
                             </div>`
                     }
                 ]

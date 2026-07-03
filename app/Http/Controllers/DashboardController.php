@@ -16,6 +16,15 @@ use App\Models\Role;
 
 class DashboardController extends Controller
 {
+    private function formatDashboardDate($value): ?string
+    {
+        if (!$value) {
+            return null;
+        }
+
+        return Carbon::parse($value, 'Asia/Phnom_Penh')->format('d M Y');
+    }
+
     /**
      * Show the dashboard view.
      */
@@ -118,6 +127,8 @@ class DashboardController extends Controller
                             'leave_type' => $r->leaveType?->leave_name ?? '—',
                             'start_date' => $r->start_date,
                             'end_date'   => $r->end_date,
+                            'start_date_display' => $this->formatDashboardDate($r->start_date),
+                            'end_date_display'   => $this->formatDashboardDate($r->end_date),
                             'total_days' => $r->total_days,
                             'photo' => (
                                 $r->employee?->photo &&

@@ -46,6 +46,7 @@
                     <div class="d-flex align-items-center ml-auto" style="gap:10px; flex-wrap:wrap;">
 
                         {{-- Add Button --}}
+                        @can('employee.create')
                         <button type="button"
                             class="btn btn-sm"
                             data-toggle="modal"
@@ -60,6 +61,7 @@
                                 font-size:.82rem;">
                             <i class="fas fa-plus mr-1"></i> Add Employee
                         </button>
+                        @endcan
 
                     </div>
 
@@ -181,6 +183,7 @@
                         </button>
 
                         <!-- Print Button -->
+                        @can('employee.export')
                         <button id="btnPrint"
                                 class="btn btn-sm"
                                 title="Print"
@@ -197,6 +200,7 @@
                                 ">
                             <i class="fas fa-print mr-1"></i> Print
                         </button>
+                        @endcan
 
                     </div>
 
@@ -306,7 +310,7 @@
                         </div>
 
                         <div class="form-group mb-3">
-                            <label class="modal-label">OFFICE</label>
+                            <label class="modal-label">OFFICE <span class="text-danger">*</span></label>
                             <select id="office_id" class="form-control form-control-sm modal-input">
                                 <option value="">— Select —</option>
                                 @foreach ($offices as $office)
@@ -362,13 +366,12 @@
                             <span class="text-danger small d-block mt-1" id="err_photo"></span>
                         </div>
 
-                        <div class="form-group mb-3">
+                    </div>
+                        <div class=" form-group mb-3">
                             <label class="modal-label">ADDRESS</label>
                             <input type="text" id="address" class="form-control form-control-sm modal-input" placeholder="e.g. Phnom Penh">
                             <span class="text-danger small d-block mt-1" id="err_address"></span>
                         </div>
-
-                    </div>
                 </div>
 
                 <div class="modal-footer"
@@ -968,20 +971,26 @@
                         className: 'text-center',
                         render: (id, t, row) => `
                             <div class="d-flex align-items-center justify-content-center" style="gap:6px;">
+                                @can('employee.view')
                                 <button type="button" class="btn-view-row btn-view"
                                         data-id="${id}" data-toggle="tooltip" title="View Detail">
                                     <i class="fas fa-eye"></i>
                                 </button>
+                                @endcan
+                                @can('employee.edit')
                                 <button type="button" class="btn-edit-row btn-edit"
                                         data-id="${id}" data-toggle="tooltip" title="Edit">
                                     <i class="fas fa-pen"></i>
                                 </button>
+                                @endcan
+                                @can('employee.delete')
                                 <button type="button" class="btn-delete-row btn-delete"
                                         data-id="${id}"
                                         data-name="${row.first_name} ${row.last_name}"
                                         data-toggle="tooltip" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
+                                @endcan
                             </div>`
                     }
                 ]

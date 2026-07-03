@@ -444,13 +444,13 @@ return [
         */
         [
             'header' => 'LEAVE MANAGEMENT',
-            // 'can'    => 'leave.view',
+            'can'    => 'leave.view',
         ],
 
         [
             'text' => 'Leave Management',
             'icon' => 'fas fa-calendar-alt',
-            // 'can'  => 'leave.view',
+            'can'  => 'leave.view',
             'submenu' => [
 
                 [
@@ -462,6 +462,7 @@ return [
                 [
                     'text' => 'My Leave',
                     'url'  => 'leave-requests/my-leave',
+                    'can'  => 'leave.my',
                 ],
 
                 [

@@ -35,6 +35,7 @@
                 </div>
 
                 <div class="d-flex ml-auto" style="gap:8px;">
+                    @can('reports.export')
                     <button id="btnPrint" class="btn btn-sm" style="height:40px;border-radius:12px;border:1.5px solid #e5e7eb;background:#fff;color:#374151;font-weight:600;padding:0 16px;">
                         <i class="fas fa-print mr-1"></i> Print
                     </button>
@@ -44,6 +45,7 @@
                     <button id="btnExportExcel" class="btn btn-sm" style="height:40px;border-radius:12px;border:none;background:linear-gradient(135deg,#059669,#047857);color:#fff;font-weight:600;padding:0 16px;">
                         <i class="fas fa-file-excel mr-1"></i> Excel
                     </button>
+                    @endcan
                 </div>
             </div>
 

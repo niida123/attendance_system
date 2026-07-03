@@ -290,7 +290,7 @@
             }
 
             const rows = [
-                ['Employee ID',  emp.employee_id   || '—'],
+                ['Employee ID',  emp.employee_code   || '—'],
                 ['Full Name',    `${emp.first_name} ${emp.last_name}`],
                 ['Department',   emp.department?.department_name  || '—'],
                 ['Position',     emp.position?.position_name      || '—'],

@@ -44,10 +44,12 @@
 
                     {{-- Print --}}
                     <div class="filter-box filter-print-box ml-auto">
+                        @can('attendance.export')
                         <button id="btnPrint" class="btn btn-sm btn-block"
                             style="height:40px;border-radius:12px;border:none;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-weight:600;box-shadow:0 4px 12px rgba(79,70,229,.3);">
                             <i class="fas fa-print mr-1"></i> Print
                         </button>
+                        @endcan
                     </div>
                 </div>
 
@@ -849,12 +851,14 @@
                         className: 'text-center',
                         render: (id, t, row) => `
                             <div class="d-flex align-items-center justify-content-center" style="gap:6px;">
+                                @can('attendance.delete')
                                 <button type="button" class="btn-delete-row btn-delete"
                                         data-id="${id}"
                                         data-name="${row.employee ? (row.employee.first_name + ' ' + row.employee.last_name) : 'this record'} (${row.attendance_date})"
                                         data-toggle="tooltip" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
+                                @endcan
                             </div>`
                     }
                 ]

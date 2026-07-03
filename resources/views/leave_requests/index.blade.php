@@ -34,10 +34,12 @@
                         <small style="color:#9ca3af;font-size:.75rem;">Manage and approve employee leave</small>
                     </div>
                 </div>
+                @can('leave.export')
                 <button type="button" id="btnExport" class="btn btn-sm ml-auto"
                     style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-weight:600;font-size:.82rem;box-shadow:0 4px 14px rgba(16,185,129,.3);">
                     <i class="fas fa-file-excel mr-1"></i> Export CSV
                 </button>
+                @endcan
             </div>
 
             <div class="card-body" style="padding:24px;background:#fafbff;">
@@ -355,20 +357,31 @@ $(document).ready(function () {
             {
                 data: null, orderable:false, searchable:false,
                 render: (d, t, r) => {
-                    let btns = `<button class="btn-action btn-view mr-1" onclick="viewDetail(${r.leave_request_id})">
+                    let btns = `
+                    @can('leave.view')
+                    <button class="btn-action btn-view mr-1" onclick="viewDetail(${r.leave_request_id})">
                                     <i class="fas fa-eye"></i>
-                                </button>`;
+                                </button>
+                    @endcan`;
                     if (r.status === 'Pending') {
-                        btns += `<button class="btn-action btn-approve mr-1" onclick="doAction(${r.leave_request_id},'approve')">
-                                    <i class="fas fa-check"></i>
-                                 </button>
-                                 <button class="btn-action btn-reject mr-1" onclick="doAction(${r.leave_request_id},'reject')">
-                                    <i class="fas fa-times"></i>
-                                 </button>`;
+                        btns += `
+                        @can('leave.approve')
+                        <button class="btn-action btn-approve mr-1" onclick="doAction(${r.leave_request_id},'approve')">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        @endcan
+                        @can('leave.reject')
+                        <button class="btn-action btn-reject mr-1" onclick="doAction(${r.leave_request_id},'reject')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        @endcan`;
                     }
-                    btns += `<button class="btn-action btn-delete" onclick="doDelete(${r.leave_request_id})">
-                                <i class="fas fa-trash"></i>
-                             </button>`;
+                    btns += `
+                    @can('leave.delete')
+                    <button class="btn-action btn-delete" onclick="doDelete(${r.leave_request_id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    @endcan`;
                     return `<div style="display:flex;align-items:center;gap:4px;">${btns}</div>`;
                 }
             },

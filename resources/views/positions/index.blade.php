@@ -45,6 +45,7 @@
                     <div class="d-flex align-items-center ml-auto" style="gap:10px; flex-wrap:wrap;">
 
                         {{-- Add Button --}}
+                        @can('position.create')
                         <button type="button"
                             class="btn btn-sm"
                             data-toggle="modal"
@@ -59,6 +60,7 @@
                                 font-size:.82rem;">
                             <i class="fas fa-plus mr-1"></i> Add Position
                         </button>
+                        @endcan
 
                     </div>
 
@@ -714,15 +716,19 @@
                         className: 'text-center',
                         render: (id, t, row) => `
                             <div class="d-flex align-items-center justify-content-center" style="gap:6px;">
+                                @can('position.edit')
                                 <button type="button" class="btn-edit-row btn-edit"
                                         data-id="${id}" data-toggle="tooltip" title="Edit">
                                     <i class="fas fa-pen"></i>
                                 </button>
+                                @endcan
+                                @can('position.delete')
                                 <button type="button" class="btn-delete-row btn-delete"
                                         data-id="${id}" data-name="${row.position_name}"
                                         data-toggle="tooltip" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
+                                @endcan
                             </div>`
                     }
                 ]

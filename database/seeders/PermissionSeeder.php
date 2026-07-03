@@ -19,48 +19,158 @@ class PermissionSeeder extends Seeder
         // Create Permissions
         $permissions = [
 
-            // Dashboard
+            /*
+            |--------------------------------------------------------------------------
+            | Dashboard
+            |--------------------------------------------------------------------------
+            */
             'dashboard.view',
 
-            // Office Management
+            /*
+            |--------------------------------------------------------------------------
+            | Office Management
+            |--------------------------------------------------------------------------
+            */
             'office.view',
+            'office.create',
+            'office.edit',
+            'office.delete',
 
-            // Employee Management
-            'employee.view',
+            /*
+            |--------------------------------------------------------------------------
+            | Department Management
+            |--------------------------------------------------------------------------
+            */
             'department.view',
+            'department.create',
+            'department.edit',
+            'department.delete',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Position Management
+            |--------------------------------------------------------------------------
+            */
             'position.view',
+            'position.create',
+            'position.edit',
+            'position.delete',
 
-            // User & Role Management
+            /*
+            |--------------------------------------------------------------------------
+            | Employee Management
+            |--------------------------------------------------------------------------
+            */
+            'employee.view',
+            'employee.create',
+            'employee.edit',
+            'employee.delete',
+            'employee.export',
+
+            /*
+            |--------------------------------------------------------------------------
+            | User Management
+            |--------------------------------------------------------------------------
+            */
             'user.view',
-            'role.view',
+            'user.create',
+            'user.edit',
+            'user.delete',
 
-            // Attendance
+            /*
+            |--------------------------------------------------------------------------
+            | Role Management
+            |--------------------------------------------------------------------------
+            */
+            'role.view',
+            'role.create',
+            'role.edit',
+            'role.delete',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Shift Management
+            |--------------------------------------------------------------------------
+            */
+            'shift.view',
+            'shift.create',
+            'shift.edit',
+            'shift.delete',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Employee Shift
+            |--------------------------------------------------------------------------
+            */
+            'employee_shift.view',
+            'employee_shift.assign',
+            'employee_shift.edit',
+            'employee_shift.remove',
+            'employee_shift.export',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Attendance
+            |--------------------------------------------------------------------------
+            */
             'attendance.check',
             'attendance.my',
             'attendance.view',
+            'attendance.edit',
+            'attendance.delete',
+            'attendance.export',
 
-            // reports
-            'reports.daily',
-            'reports.monthly',
-            'reports.quarterly',
-
-            // Shift
-            'shift.view',
-            'employee_shift.view',
-
-            // Leave
+            /*
+            |--------------------------------------------------------------------------
+            | Leave
+            |--------------------------------------------------------------------------
+            */
             'leave.my',
             'leave.view',
-            'leave_type.view',
+            'leave.create',
+            'leave.approve',
+            'leave.reject',
+            'leave.delete',
+            'leave.export',
 
-            // Holiday
+            /*
+            |--------------------------------------------------------------------------
+            | Leave Type
+            |--------------------------------------------------------------------------
+            */
+            'leave_type.view',
+            'leave_type.create',
+            'leave_type.edit',
+            'leave_type.delete',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Holiday
+            |--------------------------------------------------------------------------
+            */
             'holiday.view',
             'holiday.create',
             'holiday.edit',
             'holiday.delete',
 
-            // Profile
+            /*
+            |--------------------------------------------------------------------------
+            | Reports
+            |--------------------------------------------------------------------------
+            */
+            'reports.daily',
+            'reports.monthly',
+            'reports.quarterly',
+            'reports.export',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Profile
+            |--------------------------------------------------------------------------
+            */
             'profile.view',
+            'profile.edit',
+            'profile.change_password',
         ];
 
         foreach ($permissions as $permission) {
@@ -81,67 +191,116 @@ class PermissionSeeder extends Seeder
 
         // HR
         $hr->syncPermissions([
+            // Dashboard
             'dashboard.view',
 
-            'employee.view',
-            'department.view',
-            'position.view',
             'office.view',
+            'office.create',
+            'office.edit',
+
+            'department.view',
+            'department.create',
+            'department.edit',
+
+            'position.view',
+            'position.create',
+            'position.edit',
+
+            'employee.view',
+            'employee.create',
+            'employee.edit',
+
+            'shift.view',
+            'shift.create',
+            'shift.edit',
+
+            'employee_shift.view',
+            'employee_shift.assign',
+            'employee_shift.edit',
+
+            'attendance.view',
+            'attendance.edit',
+            'attendance.export',
             'attendance.check',
             'attendance.my',
-            'attendance.view',
 
-            'leave.my',
             'leave.view',
+            'leave.create',
+            'leave.my',
+            'leave.approve',
+            'leave.reject',
+
             'leave_type.view',
+            'leave_type.create',
+            'leave_type.edit',
 
-            // report 
-            'reports.daily',
-            'reports.monthly',
-            'reports.quarterly',
-
-            'holiday.view',
             'holiday.create',
             'holiday.edit',
 
-            'profile.view',
+            'reports.daily',
+            'reports.monthly',
+            'reports.quarterly',
+            'reports.export',
         ]);
 
         // Attendance Officer
         $attendanceOfficer->syncPermissions([
+            // Dashboard
             'dashboard.view',
 
+            // Attendance
             'attendance.check',
             'attendance.my',
             'attendance.view',
-            'leave.my',
-            'leave.view',
+            'attendance.edit',
+            'attendance.export',
 
+            // Shift
             'shift.view',
+
+            // Employee Shift
             'employee_shift.view',
 
-            // report
+            // Leave
+            'leave.my',
+            'leave.create',   // Apply for own leave
+            'leave.view',     // View all leave requests
+
+            // Holiday
+            'holiday.view',
+
+            // Reports
             'reports.daily',
             'reports.monthly',
             'reports.quarterly',
+            'reports.export',
 
-            'holiday.view',
-
+            // Profile
             'profile.view',
+            'profile.edit',
+            'profile.change_password',
         ]);
 
         // Employee
         $employee->syncPermissions([
+            // Dashboard
             'dashboard.view',
 
+            // Attendance
             'attendance.check',
             'attendance.my',
 
+            // Leave
             'leave.my',
+            'leave.create',
 
+            // Holiday
             'holiday.view',
 
+            // Profile
             'profile.view',
+            'profile.edit',
+            'profile.change_password',
         ]);
     }
 }

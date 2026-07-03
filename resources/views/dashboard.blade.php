@@ -393,7 +393,7 @@
                 <table>
                     <tr><th>Name</th><th>Leave Type</th><th>Start</th><th>End</th><th>Days</th></tr>
                     ${data.pending_list.map(r => `
-                        <tr><td>${r.name}</td><td>${r.leave_type}</td><td>${r.start_date}</td><td>${r.end_date}</td><td>${r.total_days}</td></tr>
+                        <tr><td>${r.name}</td><td>${r.leave_type}</td><td>${r.start_date_display ?? r.start_date ?? '—'}</td><td>${r.end_date_display ?? r.end_date ?? '—'}</td><td>${r.total_days}</td></tr>
                     `).join('') || '<tr><td colspan="5">No pending leave requests</td></tr>'}
                 </table>
             `;
@@ -559,7 +559,7 @@ function loadDashboard() {
                     }
                     <div>
                         <div style="font-weight:600;color:#1a1f36;font-size:.85rem;">${r.name}</div>
-                        <div style="color:#9ca3af;font-size:.72rem;">${r.leave_type} · ${r.start_date} → ${r.end_date} (${r.total_days}d)</div>
+                        <div style="color:#9ca3af;font-size:.72rem;">${r.leave_type} · ${r.start_date_display ?? r.start_date ?? '—'} → ${r.end_date_display ?? r.end_date ?? '—'} (${r.total_days}d)</div>
                     </div>
                 </li>`;
         });

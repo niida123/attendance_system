@@ -38,11 +38,13 @@
                     </div>
 
                     <div class="d-flex align-items-center ml-auto mt-2" style="gap:10px;flex-wrap:wrap;">
+                        @can('office.create')
                         <button type="button" id="btnAddOffice"
                             class="btn btn-sm"
                             style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-weight:600;font-size:.82rem;letter-spacing:.2px;box-shadow:0 4px 14px rgba(79,70,229,.3);white-space:nowrap;">
                             <i class="fas fa-plus mr-1"></i> Add Office
                         </button>
+                        @endcan
                     </div>
                 </div>
 
@@ -459,8 +461,13 @@
                 {
                     data: null, orderable: false, searchable: false,
                     render: (d, t, r) => `
-                        <button class="action-btn btn-edit" data-edit-id="${r.office_id}" title="Edit"><i class="fas fa-pen"></i></button>
-                        <button class="action-btn btn-delete" data-delete-id="${r.office_id}" data-name="${r.office_name}" title="Delete"><i class="fas fa-trash"></i></button>`
+                    @can('office.edit')    
+                    <button class="action-btn btn-edit" data-edit-id="${r.office_id}" title="Edit"><i class="fas fa-pen"></i></button>
+                    @endcan
+                    @can('office.delete')
+                        <button class="action-btn btn-delete" data-delete-id="${r.office_id}" data-name="${r.office_name}" title="Delete"><i class="fas fa-trash"></i></button>
+                    @endcan
+                    `
                 },
             ]
         });

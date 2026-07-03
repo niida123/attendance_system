@@ -39,11 +39,13 @@
                     </div>
 
                     <div class="d-flex align-items-center ml-auto" style="gap:10px;flex-wrap:wrap;">
+                        @can('user.create')
                         <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#userModal"
                             id="btnCreate"
                             style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-weight:600;font-size:.82rem;">
                             <i class="fas fa-plus mr-1"></i> Add User
                         </button>
+                        @endcan
                     </div>
                 </div>
 
@@ -784,15 +786,19 @@
                         className: 'text-center',
                         render: (id, t, row) => `
                             <div class="d-flex align-items-center justify-content-center" style="gap:6px;">
+                                @can('user.edit')
                                 <button type="button" class="btn-edit-row btn-edit"
                                         data-id="${id}" data-toggle="tooltip" title="Edit">
                                     <i class="fas fa-pen"></i>
                                 </button>
+                                @endcan
+                                @can('user.delete')
                                 <button type="button" class="btn-delete-row btn-delete"
                                         data-id="${id}" data-name="${row.username}"
                                         data-toggle="tooltip" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
+                                @endcan
                             </div>`
                     }
                 ]
