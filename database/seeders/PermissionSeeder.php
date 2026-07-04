@@ -105,7 +105,7 @@ class PermissionSeeder extends Seeder
             'employee_shift.view',
             'employee_shift.assign',
             'employee_shift.edit',
-            'employee_shift.remove',
+            'employee_shift.delete',
             'employee_shift.export',
 
             /*
@@ -213,10 +213,12 @@ class PermissionSeeder extends Seeder
             'shift.view',
             'shift.create',
             'shift.edit',
+            'shift.delete',
 
             'employee_shift.view',
             'employee_shift.assign',
             'employee_shift.edit',
+            'employee_shift.delete',
 
             'attendance.view',
             'attendance.edit',

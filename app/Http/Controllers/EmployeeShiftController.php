@@ -153,20 +153,39 @@ class EmployeeShiftController extends Controller
      */
     public function destroy($id)
     {
-        $employeeShift = EmployeeShift::findOrFail($id);
+        try {
+            $employeeShift = EmployeeShift::findOrFail($id);
 
-        if ($employeeShift->employees()->exists()) {
+            // Check if attendance records exist for this employee during the shift period
+            $hasAttendance = DB::table('attendance')
+                ->where('employee_id', $employeeShift->employee_id)
+                ->when($employeeShift->effective_from, function ($query) use ($employeeShift) {
+                    $query->where('attendance_date', '>=', $employeeShift->effective_from);
+                })
+                ->when($employeeShift->effective_to, function ($query) use ($employeeShift) {
+                    $query->where('attendance_date', '<=', $employeeShift->effective_to);
+                })
+                ->exists();
+
+            if ($hasAttendance) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot delete: attendance records exist for this employee during this shift period.',
+                ], 422);
+            }
+
+            $employeeShift->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Employee shift deleted successfully.',
+            ]);
+
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cannot delete: this employee shift has linked employees.',
-            ], 422);
+                'message' => $e->getMessage(),
+            ], 500);
         }
-
-        $employeeShift->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Employee shift deleted successfully.',
-        ]);
     }
 }

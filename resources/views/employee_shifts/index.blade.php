@@ -760,7 +760,7 @@
                                     <i class="fas fa-pen"></i>
                                 </button>
                                 @endcan
-                                @can('employee_shift.remove')
+                                @can('employee_shift.delete')
                                 <button type="button" class="btn-delete-row btn-delete"
                                         data-id="${id}" data-name="${row.employee_name}"
                                         data-toggle="tooltip" title="Delete">

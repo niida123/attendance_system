@@ -38,11 +38,6 @@
         </button>
     </div>
 
-        <div id="holiday-banner" class="d-none d-flex align-items-center mb-3" style="background:#eef2ff;border:1px solid #e0e7ff;border-radius:12px;padding:12px 18px;">
-            <i class="fas fa-umbrella-beach mr-2" style="color:#4f46e5;"></i>
-            <span id="holiday-text" style="color:#374151;font-size:.85rem;"></span>
-        </div>
-
         {{-- Stats Row --}}
         <div class="row mb-4 g-3" id="statsRow">
             <div class="col-6 col-lg-2">

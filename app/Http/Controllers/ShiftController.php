@@ -155,20 +155,32 @@ class ShiftController extends Controller
 
     public function destroy(string $id)
     {
-        $shift = Shift::findOrFail($id);
+        try {
+            $shift = Shift::findOrFail($id);
 
-        if ($shift->employees()->exists()) {
+            $hasEmployeeShift = \Illuminate\Support\Facades\DB::table('employee_shifts')
+                ->where('shift_id', $shift->shift_id)
+                ->exists();
+
+            if ($hasEmployeeShift) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot delete "' . $shift->shift_name . '": this shift is assigned to one or more employees.',
+                ], 422);
+            }
+
+            $shift->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Shift deleted successfully.'
+            ]);
+
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cannot delete "' . $shift->shift_name . '": this shift has linked employees.',
-            ], 422);
+                'message' => $e->getMessage(),
+            ], 500);
         }
-
-        $shift->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Shift deleted successfully.'
-        ]);
     }
 }
